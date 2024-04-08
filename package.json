@@ -1,0 +1,23 @@
+{
+  "name": "azotic-topaz",
+  "version": "1.0.0",
+  "description": "The desktop version of the app Topaz.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gold-Team-Projects/Azotic_Topaz-Dashboard.git"
+  },
+  "author": "Gold Team",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Gold-Team-Projects/Azotic_Topaz-Dashboard/issues"
+  },
+  "homepage": "https://github.com/Gold-Team-Projects/Azotic_Topaz-Dashboard#readme",
+  "devDependencies": {
+    "electron": "^29.2.0"
+  }
+}
