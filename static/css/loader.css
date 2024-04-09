@@ -1,0 +1,35 @@
+.widget {
+    display: flex;
+    flex-direction: column;
+    border: solid;
+}
+.widget .subdiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-content: center;
+    
+    border-bottom: solid;
+    height: 25px;
+    text-align: center;
+}
+.widget iframe {
+    width: 100%;
+    height: 100%;
+}
+.widget .subdiv p, .widget .subdiv button {
+    margin: 0;
+    padding: 2px;
+}
+
+.overlay {
+    z-index: 2;
+    top: 0;
+    left: 0;
+    margin: 20%;
+    height: 60%;
+    width: 60%;
+    position: absolute;
+    background-color: rgba(2, 2, 2, 0.75);
+    visibility: hidden;
+}

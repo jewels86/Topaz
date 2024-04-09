@@ -1,4 +1,4 @@
-const { app, browserWindow, BrowserWindow } = require('electron')
+const { app, BrowserWindow } = require('electron')
 
 const defaults = {
     width: 800,
