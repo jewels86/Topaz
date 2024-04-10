@@ -7,10 +7,11 @@ let overlayOpen = false;
  * @param {string} name Name of the widget to loading.
  * @param {string} id ID of the widget.
  * @param {object} settings The widget's settings.
+ * @param {object} data The widget's data.
  * @param {function} onError A function to be performed if an error occurs.
  * @returns {bool} True if successful, false if not.  
  */
-function loadWidget(container, name, id, settings, onError=(err)=>console.error(err)) {
+function loadWidget(container, name, id, settings, data, onError=(err)=>console.error(err)) {
     if (container == null || name == null || settings == null) { onError(new Error("One required parameter is null.")); return false; }
     if (!document.contains(container)) { onError(new Error("Document does not contain the given container.")); return false; }
     if (name.length = 0) { onError(new Error("'name' parameter is empty.")); return false; }
@@ -38,6 +39,18 @@ function loadWidget(container, name, id, settings, onError=(err)=>console.error(
 
     const iframe = document.createElement('iframe');
     iframe.src = `../static/widgets/${id}/index.html`;
+    var settingsArray = Object.keys(settings).map((key) => [key, settings[key]]);
+    settingsArray.forEach((setting, index) => {
+        if (index === 0) { iframe.src += '?'; }
+        iframe.src += `${setting[0]}=${setting[1]}`;
+        if (!(index === settingsArray.length)) { iframe.src += '&'; }
+    });
+    var dataArray = Object.keys(data).map((key) => [key, data[key]]);
+    dataArray.forEach((value, index) => {
+        if (index === 0) { iframe.src += "&"; }
+        iframe.src += `${value[0]}=${value[1]}`;
+        if (!(index === dataArray.length)) { iframe.src += '&'; }
+    });
     // IFrame configured.
 
     container.appendChild(subdiv);

@@ -5,9 +5,11 @@
     </head>
     <body>
         <div id="0"></div>
+        <div id="1"></div>
     </body>
     <script src="../static/scripts/loader.js"></script>
     <script>
-        loadWidget(document.getElementById("0"), "Test widget", "test-widget", {});
+        loadWidget(document.getElementById("0"), "Test widget", "test-widget", {testSetting1: "Hello World!"}, {});
+        loadWidget(document.getElementById("1"), "Test widget 1 - Notpad", "notepad", {text: "Hello World!"}, {});
     </script>
 </html>
