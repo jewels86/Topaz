@@ -1,7 +1,3 @@
-function getSettings() {
-    return new URLSearchParams(document.location.href.split('?')[1]);
-}
-
-module.exports = {
-    getSettings: getSettings
+export function getWidgetArguments() {
+    return Object.fromEntries([...new URLSearchParams(document.location.href.split('?')[1])]);
 }

@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column;
     border: solid;
+    margin: 5px;
 }
 .widget .subdiv {
     display: flex;
@@ -24,12 +25,11 @@
 
 .overlay {
     z-index: 2;
-    top: 0;
-    left: 0;
-    margin: 20%;
+    position: absolute;
+    top: 20%;
+    left: 20%;
     height: 60%;
     width: 60%;
-    position: absolute;
     background-color: rgba(2, 2, 2, 0.75);
     visibility: hidden;
 }

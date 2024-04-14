@@ -1,4 +1,4 @@
-import { getSettings } from '../widget.js';
+import { getWidgetArguments } from '../widget.js';
 
 const textarea = document.getElementById("text");
-textarea.innerText = getSettings().get("text");
+textarea.innerText = getWidgetArguments().text;

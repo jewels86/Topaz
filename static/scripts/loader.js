@@ -21,12 +21,18 @@ function loadWidget(container, name, id, settings, data, onError=(err)=>console.
 
     const settingsHasHeight = Object.hasOwn(settings, 'height');
     const settingsHasWidth = Object.hasOwn(settings, 'width');
+    const settingsHasX = Object.hasOwn(settings, 'x');
+    const settingsHasY = Object.hasOwn(settings, 'y');
 
     container.style.height = `${settingsHasHeight ? settings.height : defaultHeight}px`;
     container.style.width = `${settingsHasWidth ? settings.width : defaultWidth}px`;
+    if (settingsHasX) container.style.gridColumn = settings.x;
+    if (settingsHasY) container.style.gridRow = settings.y;
     // Container configured. 
     if (settingsHasHeight) delete settings.height;
     if (settingsHasWidth) delete settings.width;
+    if (settingsHasX) delete settings.x;
+    if (settingsHasY) delete settings.y;
     // Cleaned up.
 
     const subdiv = document.createElement('div');

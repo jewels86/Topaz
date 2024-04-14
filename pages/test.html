@@ -2,14 +2,19 @@
 <html>
     <head>
         <link rel="stylesheet" href="../static/css/loader.css">
+        <link rel="stylesheet" href="../static/css/main.css">
     </head>
     <body>
-        <div id="0"></div>
-        <div id="1"></div>
+        <div class="container">
+            <div id="0"></div>
+            <div id="1"></div>
+            <div id="2"></div>
+        </div>
     </body>
     <script src="../static/scripts/loader.js"></script>
     <script>
-        loadWidget(document.getElementById("0"), "Test widget", "test-widget", {testSetting1: "Hello World!"}, {});
-        loadWidget(document.getElementById("1"), "Test widget 1 - Notpad", "notepad", {text: "Hello World!"}, {});
+        loadWidget(document.getElementById("0"), "Test widget", "test-widget", {x: 0, y: 0}, {});
+        loadWidget(document.getElementById("1"), "Test widget 2 - Notepad", "notepad", {text: "Hello World!", x:1,y:0}, {});
+        loadWidget(document.getElementById("2"), "Test widget 3 - Calendar", "calendar", {x: 1, y: 1}, {});
     </script>
 </html>
