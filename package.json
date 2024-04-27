@@ -18,6 +18,6 @@
   },
   "homepage": "https://github.com/Gold-Team-Projects/Azotic_Topaz-Dashboard#readme",
   "devDependencies": {
-    "electron": "^29.2.0"
+    "electron": "^29.3.1"
   }
 }

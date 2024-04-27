@@ -75,7 +75,15 @@ function loadWidget(container, name, id, settings, data, onError=(err)=>console.
             overlay.style.visibility = 'visible';
             document.body.appendChild(overlay);
             overlayOpen = true;
+
+            settingsArray.forEach((value) => {
+                const div = document.createElement('div');
+                div.style.display = 'flex';
+                div.style.flexDirection = 'row';
+                div.style.width = '100%';
+                div.appendChild(document.createElement('p').innerText = value[0]);
+                div.appendChild((document.createElement('input')).value = value[1]);
+            });
         }
-        
     });
 }

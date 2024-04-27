@@ -1,14 +1,19 @@
 const { app, BrowserWindow } = require('electron')
 
 const defaults = {
-    width: 800,
+    width: 1000,
     height: 600
 }
 
-function load(page, options) {
+app.whenReady().then(() => {
     const win = new BrowserWindow({
-        width: options.width ? options.width : defaults.width,
-        height: options.height ? options.width : defaults.height
+        width: defaults.width,
+        height: defaults.height
     })
-    win.loadFile(`./pages/${page}`);
-}
+    win.loadFile('./pages/test.html')
+
+    app.on('window-all-closed', () => {
+        app.quit();
+    })
+})
+
