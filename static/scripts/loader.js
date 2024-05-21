@@ -1,6 +1,12 @@
-const defaultHeight = 300;
-const defaultWidth = 400;
+var currentColumns = 0;
+var currentRows = 0;
 let overlayOpen = false;
+
+function setUp() {
+    const container = document.getElementById('container');
+    container.style.gridTemplateColumns = 'minmax(0, 1fr)';
+}
+
 /**
  * Loads the widget given into the container.
  * @param {HTMLDivElement} container Container to load into in the form of a div.
@@ -11,29 +17,66 @@ let overlayOpen = false;
  * @param {function} onError A function to be performed if an error occurs.
  * @returns {bool} True if successful, false if not.  
  */
-function loadWidget(container, name, id, settings, data, onError=(err)=>console.error(err)) {
-    if (container == null || name == null || settings == null) { onError(new Error("One required parameter is null.")); return false; }
-    if (!document.contains(container)) { onError(new Error("Document does not contain the given container.")); return false; }
+function loadWidget(parent, name, id, settings, data, onError=(err)=>console.error(err)) {
+    if (name == null || settings == null) { onError(new Error("One required parameter is null.")); return false; }
     if (name.length = 0) { onError(new Error("'name' parameter is empty.")); return false; }
 
-    if (container.className != "widget") container.className = "widget";
-    // Checks finished, All are non-null and operable.
+    const settingsHas = (x) => Object.hasOwn(settings, x);
 
-    const settingsHasHeight = Object.hasOwn(settings, 'height');
-    const settingsHasWidth = Object.hasOwn(settings, 'width');
-    const settingsHasX = Object.hasOwn(settings, 'x');
-    const settingsHasY = Object.hasOwn(settings, 'y');
+    const prevColumns = currentRows;
+    const prevRows = currentRows;
 
-    container.style.height = `${settingsHasHeight ? settings.height : defaultHeight}px`;
-    container.style.width = `${settingsHasWidth ? settings.width : defaultWidth}px`;
-    if (settingsHasX) container.style.gridColumn = settings.x;
-    if (settingsHasY) container.style.gridRow = settings.y;
-    // Container configured. 
-    if (settingsHasHeight) delete settings.height;
-    if (settingsHasWidth) delete settings.width;
-    if (settingsHasX) delete settings.x;
-    if (settingsHasY) delete settings.y;
-    // Cleaned up.
+    var coords = '';
+    if (settingsHas('x')) { settings.x += 1; coords += settings.x; }
+    else { coords += '/0' }
+
+    if (settingsHas('y')) { settings.y += 1; coords += '/' + settings.y; }
+    else { coords += '/' + '0'; }
+
+    currentColumns += (parseInt(coords.split("/")[0]) - currentColumns) >= 0 ? parseInt(coords.split("/")[0]) - currentColumns : 0;
+    currentRows += (parseInt(coords.split("/")[1]) - currentRows) >= 0 ? parseInt(coords.split("/")[1]) - currentRows : 0;
+
+    for (let y = prevRows; y < currentRows; y++) {
+        parent.style.gridTemplateRows += ' minmax(0, 1fr)';
+    }
+    for (let x = prevColumns; x < currentColumns; x++) {
+        parent.style.gridTemplateColumns += ' minmax(0, 1fr)';
+    }
+    for (let x = 1; x <= currentColumns; x++) {
+        for (let y = 1; y <= currentRows; y++) {
+            if (document.getElementById(x + '/' + y) != null) { continue; }
+            const tmp = document.createElement('div');
+            tmp.id = x + '/' + y;
+            parent.appendChild(tmp);
+        }
+    }
+
+    console.log(coords);
+    console.log(`${prevColumns}:${currentColumns}`);
+    console.log(`${prevRows}:${currentRows}`);
+
+    for (let x = coords.split('/')[0] + 1; x <= coords.split('/')[0] + (settingsHas('width') ? settings.width : 1); x++) {
+        const block = document.getElementById(x + '/' + coords.split('/')[1]);
+        if (block == null) { continue; }
+        block.remove();
+    }
+    for (let y = coords.split('/')[1] + 1; y <= coords.split('/')[1] + (settingsHas('height') ? settings.height : 1); y++) {
+        const block = document.getElementById(coords.split('/')[0] + '/' + y);
+        if (block == null) { continue; }
+        block.remove();
+    }
+
+    const container = document.getElementById(coords);
+    container.className = 'widget';
+    container.style.gridColumn = `${coords.split('/')[0]} / ${settingsHas('width') ? parseInt(coords.split('/')[0]) + settings.width : parseInt(coords.split('/')[0])}`;
+    container.style.gridRow = `${coords.split('/')[1]} / ${settingsHas('height') ? parseInt(coords.split('/')[1]) + settings.height : parseInt(coords.split('/')[1])}`;
+
+    // Container configured
+    if (settingsHas('height')) delete settings.height;
+    if (settingsHas('width')) delete settings.width;
+    if (settingsHas('x')) delete settings.x;
+    if (settingsHas('y')) delete settings.y;
+    // Cleaned up
 
     const subdiv = document.createElement('div');
     subdiv.className = "subdiv";
@@ -53,7 +96,7 @@ function loadWidget(container, name, id, settings, data, onError=(err)=>console.
     });
     var dataArray = Object.keys(data).map((key) => [key, data[key]]);
     dataArray.forEach((value, index) => {
-        if (index === 0) { iframe.src += "&"; }
+        if (index === 0) { if (iframe.src.includes('?')) { iframe.src += "&"; } else { iframe.src += "?"; } }
         iframe.src += `${value[0]}=${value[1]}`;
         if (!(index === dataArray.length)) { iframe.src += '&'; }
     });

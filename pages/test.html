@@ -5,16 +5,13 @@
         <link rel="stylesheet" href="../static/css/main.css">
     </head>
     <body>
-        <div class="container">
-            <div id="0"></div>
-            <div id="1"></div>
-            <div id="2"></div>
-        </div>
+        <div id="container"></div>
     </body>
 </html>
 <script src="../static/scripts/loader.js"></script>
 <script>
-    loadWidget(document.getElementById("0"), "Test widget", "test-widget", { x: 0, y: 0 }, {});
-    loadWidget(document.getElementById("1"), "Test widget 2 - Notepad", "notepad", { text: "Hello World!", x: 1, y: 0 }, {});
-    loadWidget(document.getElementById("2"), "Test widget 3 - Calendar", "calendar", { x: 1, y: 1 }, {});
+    setUp();
+    loadWidget(document.getElementById('container'), "Test widget", "test-widget", { x: 0, y: 0, width: 2 }, {});
+    loadWidget(document.getElementById('container'), "Test widget 2", "notepad", { x: 0, y: 1, width: 2}, { text: "Hello"});
+    loadWidget(document.getElementById('container'), "Test widget 3", "calendar", { x: 2, y: 0, height: 2}, {});
 </script>
