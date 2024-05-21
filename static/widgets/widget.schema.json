@@ -1,0 +1,44 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Widget",
+    "description": "Widget schema",
+    "type": "object",
+    "properties": {
+        "entry": {
+            "description": "Entry point for the widget",
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"},
+                "type": {"type": "string", "enum": ["js", "html"]}
+            },
+            "required": ["path", "type"]
+        },
+        "settings": {
+            "description": "Widget settings",
+            "type": "object",
+            "patternProperties": {
+                ".*": {
+                   "type": "object",
+                    "properties": {
+                        "name": {"type": "string"},
+                        "default": {"type": "object"},
+                        "type": {"type": "string", "enum": ["string", "number", "array", "object"]}
+                    } 
+                }
+            }
+        },
+        "data": {
+            "description": "Widget data",
+            "type": "object",
+            "patternProperties": {
+                ".*": {
+                    "properties": {
+                        "default": {},
+                        "type": {"type": "string", "enum": ["string", "number", "array", "object"]}
+                    }
+                }
+            }
+        }
+    },
+    "required": ["entry", "settings", "data"]
+}

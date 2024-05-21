@@ -1,0 +1,14 @@
+{
+    "$schema": "../widget.schema.json",
+    "entry": {
+        "path": "index.html",
+        "type": "html"
+    },
+    "settings": {},
+    "data": {
+        "text": {
+            "default": "",
+            "type": "string"
+        }
+    }
+}

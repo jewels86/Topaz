@@ -17,11 +17,12 @@ function setUp() {
  * @param {function} onError A function to be performed if an error occurs.
  * @returns {bool} True if successful, false if not.  
  */
-function loadWidget(parent, name, id, settings, data, onError=(err)=>console.error(err)) {
+async function loadWidget(parent, name, id, settings, data, onError=(err)=>console.error(err)) {
     if (name == null || settings == null) { onError(new Error("One required parameter is null.")); return false; }
     if (name.length = 0) { onError(new Error("'name' parameter is empty.")); return false; }
 
     const settingsHas = (x) => Object.hasOwn(settings, x);
+    const dataHas = (x) => Object.hasOwn(data, x);
 
     const prevColumns = currentRows;
     const prevRows = currentRows;
@@ -88,14 +89,27 @@ function loadWidget(parent, name, id, settings, data, onError=(err)=>console.err
 
     const iframe = document.createElement('iframe');
     iframe.src = `../static/widgets/${id}/index.html`;
+
+    const widgetData = JSON.parse(await (await fetch(`../static/widgets/${id}/${id}.widget.json`)).text());
+    if (widgetData == null) { throw new Error("Widget data can't be found."); }
+
     var settingsArray = Object.keys(settings).map((key) => [key, settings[key]]);
     settingsArray.forEach((setting, index) => {
+        if (!settingsHas(setting[0])) { return; }
+        if (widgetData.settings[setting[0]].type != typeof setting[1]) { return; }
+
         if (index === 0) { iframe.src += '?'; }
-        iframe.src += `${setting[0]}=${setting[1]}`;
+        iframe.src += `${setting[0]}=${setting[1].toString()}`;
         if (!(index === settingsArray.length)) { iframe.src += '&'; }
     });
     var dataArray = Object.keys(data).map((key) => [key, data[key]]);
     dataArray.forEach((value, index) => {
+        if (Object.hasOwn(widgetData.data, value[0])) { return; }
+        if (widgetData.data[value[0]].type != typeof value[1]) { 
+            if (Object.hasOwn(widgetData.data[value[0]], 'default')) { value[1] == widgetData.data[value[0]].default; }
+            else { return; }
+        }
+
         if (index === 0) { if (iframe.src.includes('?')) { iframe.src += "&"; } else { iframe.src += "?"; } }
         iframe.src += `${value[0]}=${value[1]}`;
         if (!(index === dataArray.length)) { iframe.src += '&'; }

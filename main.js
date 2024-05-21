@@ -11,6 +11,7 @@ app.whenReady().then(() => {
         height: defaults.height
     })
     win.loadFile('./pages/test.html')
+    win.maximize();
 
     app.on('window-all-closed', () => {
         app.quit();
