@@ -4,6 +4,8 @@
         "path": "index.html",
         "type": "html"
     },
-    "settings": {},
+    "settings": {
+        "setting1": {"type": "string", "default": ""}
+    },
     "data": {}
 }

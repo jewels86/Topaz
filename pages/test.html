@@ -12,8 +12,8 @@
 <script>
     setUp();
     async function main() {
-        await loadWidget(document.getElementById('container'), "Test widget", "test-widget", { x: 0, y: 0, width: 2 }, {});
-        await loadWidget(document.getElementById('container'), "Test widget 2", "notepad", { x: 0, y: 1, width: 2}, { text: []});
+        await loadWidget(document.getElementById('container'), "Test widget", "test-widget", { x: 0, y: 0, width: 2, setting1: "hello" }, {});
+        await loadWidget(document.getElementById('container'), "Test widget 2", "notepad", { x: 0, y: 1, width: 2}, { text: "Hello World!"});
         await loadWidget(document.getElementById('container'), "Test widget 3", "calendar", { x: 2, y: 0, height: 2}, {});
     }
     main();
