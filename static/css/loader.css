@@ -2,9 +2,9 @@
     display: flex;
     flex-direction: column;
     border: solid;
-    margin: 5px;
-    min-height: 30vh;
-    min-width: 28vw;
+    margin: 1%;
+    min-height: 28%;
+    min-width: 28%;
 }
 .widget .subdiv {
     display: flex;
@@ -35,9 +35,9 @@
     background-color: rgba(2, 2, 2, 0.75);
 }
 
-.overlay input {
-    margin: 20px 5px;
-    height: 15px;
+.overlay input, .overlay select, .overlay p {
+    margin: 5px;
+    height: 20px;
 }
 
 .horizontal-subdiv {

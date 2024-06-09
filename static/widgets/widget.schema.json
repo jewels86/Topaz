@@ -37,7 +37,8 @@
                     }
                 }
             }
-        }
+        },
+        "name": {"type": "string"}
     },
-    "required": ["entry", "settings", "data"]
+    "required": ["entry", "settings", "data", "name"]
 }

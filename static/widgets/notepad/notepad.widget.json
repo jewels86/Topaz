@@ -10,5 +10,6 @@
             "default": "",
             "type": "string"
         }
-    }
+    },
+    "name": "Notepad"
 }

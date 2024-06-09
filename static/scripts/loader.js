@@ -4,9 +4,19 @@ let overlayClose = () => {};
 let currentWidgetCount = 0;
 let data = {};
 let workspace = {};
-const widgetParts =                 ["Name", "ID"]
-const extraWidgetParts =            ["X", "Y", "Width", "Height"]
-const extraWidgetPartsDefaults =    [() => currentColumns, () => currentRows, 1, 1]
+const widgetParts =                 ["Name", "ID"];
+const extraWidgetParts =            ["X", "Y", "Width", "Height"];
+const extraWidgetPartsDefaults =    [() => 0, () => parseInt(currentRows), () => 1, () => 1];
+const column = ' minmax(28%, 1fr)'
+const row = ' minmax(28%, 1fr)';
+
+function forAllBlocks(f) {
+    for (let y = 1; y <= currentRows; y++) {
+        for (let x = 1; x <= currentColumn; x++) {
+            f(document.getElementById(x + '/' + y));
+        }
+    }
+} 
 
 /**
  * Sets up the app for execution.
@@ -16,7 +26,6 @@ async function setUp() {
     //container.style.gridTemplateColumns = 'minmax(0, 1fr)';
 
     if (await window.api.fs.exists('data.json') != true) {
-        window.api.log('data.json not found: ' + await window.api.fs.exists('data.json'));
         window.api.fs.save('data.json', JSON.stringify({ workspaces: { default: { path: "workspaces/default.json" } }, latest: "default" }));
         window.api.fs.mkdir('workspaces');
         window.api.fs.save('workspaces/default.json', JSON.stringify({ name: "Default Workspace", widgets: [] }));
@@ -72,10 +81,10 @@ async function loadWidget(parent, name, id, settings, data, onError=(err)=>conso
     currentRows += (parseInt(coords.split("/")[1]) - currentRows) >= 0 ? parseInt(coords.split("/")[1]) - currentRows : 0;
 
     for (let y = prevRows; y < currentRows; y++) {
-        parent.style.gridTemplateRows += ' minmax(0, 1fr)';
+        parent.style.gridTemplateRows += row;
     }
     for (let x = prevColumns; x < currentColumns; x++) {
-        parent.style.gridTemplateColumns += ' minmax(0, 1fr)';
+        parent.style.gridTemplateColumns += column;
     }
     for (let x = 1; x <= currentColumns; x++) {
         for (let y = 1; y <= currentRows; y++) {
@@ -150,18 +159,50 @@ async function loadWidget(parent, name, id, settings, data, onError=(err)=>conso
     
 }
 
+function trim() {
+    const container = document.getElementById('container');
+    const getgtc = () => container.style.gridTemplateColumns;
+    for (; currentColumns < getgtc().split('minmax').length - 1;) {
+        console.log(currentColumns);
+        console.log(getgtc().split(column).length - 1);
+        container.style.gridTemplateColumns = getgtc().substring(0, getgtc().lastIndexOf('minmax'))
+        //forAllBlocks(x => { if (parseInt(x.id.split('/')[0]) )})
+    }
+    const getgtr = () => container.style.gridTemplateRows;
+    for (; currentRows < getgtr().split(row).length - 1;) {
+        container.style.gridTemplateRows = getgtr().substring(0, getgtr().lastIndexOf(row));
+    }
+}
+
 /**
  * Creates a new widget.
  */
-function newWidget() {
+async function newWidget() {
     const overlay = document.createElement('div');
     overlay.className = 'overlay';
 
     overlayClose();
 
-    widgetParts.forEach((part) => {
+    widgetParts.forEach(async (part) => {
         if (String(part) == "ID") {
-            
+            const ids = (await window.api.fs.ls('static/widgets')).filter(d => !d.includes('.'));
+            const stack = document.createElement('select');
+            stack.id = 'id';
+            ids.forEach(async id => {
+                const widgetData = JSON.parse(new TextDecoder().decode(await window.api.fs.read(`static/widgets/${id}/${id}.widget.json`)));
+                const option = document.createElement('option');
+                option.value = id;
+                option.innerText = widgetData.name;
+                stack.appendChild(option);
+                
+            });
+            const subdiv = document.createElement('div');
+            subdiv.className = 'horizontal-subdiv';
+            const p = document.createElement('p');
+            p.innerText = part;
+            subdiv.appendChild(p);
+            subdiv.appendChild(stack);
+            overlay.appendChild(subdiv);
             return;
         }
         part = String(part);
@@ -176,13 +217,37 @@ function newWidget() {
         overlay.appendChild(subdiv);
     });
 
+    await new Promise((r) => setTimeout(r, 100));
+
+    extraWidgetParts.forEach(part => {
+        part = String(part);
+
+        const subdiv = document.createElement('div');
+        subdiv.className = 'horizontal-subdiv';
+        const p = document.createElement('p');
+        p.innerText = part;
+        const input = document.createElement('input');
+        input.id = part.toLowerCase();
+
+        subdiv.appendChild(p);
+        subdiv.appendChild(input);
+        overlay.appendChild(subdiv);
+    });
+
+    await new Promise((r) => setTimeout(r, 100));
+
     const submit = document.createElement('button');
     submit.innerText = "Create";
     submit.addEventListener('click', (ev) => {
-        loadWidget(document.getElementById('container'), document.getElementById('name').value, document.getElementById('id').value, {}, {});
+        const settings = {};
+        extraWidgetParts.forEach((part, index) => { settings[part.toLowerCase()] = document.getElementById(part.toLowerCase()).value == '' ? extraWidgetPartsDefaults[index]() : parseInt(document.getElementById(part.toLowerCase()).value); })
+        console.log(settings);
+        loadWidget(document.getElementById('container'), document.getElementById('name').value, document.getElementById('id').value, settings, {});
+        trim();
         closeOverlay();
     });
     overlay.appendChild(submit);
+
     document.body.appendChild(overlay);
     closeOverlay = () => overlay.remove();
 }

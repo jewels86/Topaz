@@ -4,9 +4,7 @@
         "path": "index.html",
         "type": "html"
     },
-    "settings": {
-        "setting1": {"type": "string", "default": ""}
-    },
+    "settings": {},
     "data": {},
-    "name": "Test Widget"
+    "name": "Embed"
 }

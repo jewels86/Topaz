@@ -5,5 +5,6 @@
         "type": "html"
     },
     "settings": {},
-    "data": {}
+    "data": {},
+    "name": "Calendar"
 }
