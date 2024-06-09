@@ -12,7 +12,7 @@ app.whenReady().then(() => {
     ipcMain.handle('req:fs:read',       (ev, args) => { return fs.readFileSync(args) })
     ipcMain.handle('req:fs:exists',     (ev, args) => { return fs.existsSync(args) })
     ipcMain.handle('req:fs:mkdir',      (ev, args) => { return fs.mkdirSync(args) })
-    ipcMain.handle('req:log',           (ev, args) => { return console.log(args) })
+    ipcMain.handle('log',               (ev, args) => { return console.log(args) })
 
     const win = new BrowserWindow({
         width: defaults.width,
@@ -21,7 +21,7 @@ app.whenReady().then(() => {
     })
 
     win.hide()
-    win.loadFile('./pages/test.html')
+    win.loadFile('./pages/index.html')
 
     win.once('ready-to-show', () => win.show())
     win.maximize()

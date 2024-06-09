@@ -3,6 +3,8 @@
     flex-direction: column;
     border: solid;
     margin: 5px;
+    min-height: 30vh;
+    min-width: 28vw;
 }
 .widget .subdiv {
     display: flex;
@@ -24,12 +26,22 @@
 }
 
 .overlay {
-    z-index: 2;
-    position: absolute;
+    z-index: 3;
+    position: fixed;
     top: 20%;
     left: 20%;
     height: 60%;
     width: 60%;
     background-color: rgba(2, 2, 2, 0.75);
-    visibility: hidden;
+}
+
+.overlay input {
+    margin: 20px 5px;
+    height: 15px;
+}
+
+.horizontal-subdiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }

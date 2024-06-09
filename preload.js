@@ -7,5 +7,5 @@ contextBridge.exposeInMainWorld('api', {
         exists:     (path)      => ipcRenderer.invoke('req:fs:exists', path),
         mkdir:      (path)      => ipcRenderer.invoke('req:fs:mkdir', path)
     },
-    log:            (x)         => ipcRenderer.invoke('req:log', x)
+    log:            (x)         => ipcRenderer.invoke('log', x)
 });

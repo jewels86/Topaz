@@ -1,1 +1,1 @@
-{"workspaces":[{"name":"default","path":"workspaces/default.json"}],"default":"default"}
+{"workspaces":{"default":{"path":"workspaces/default.json"}},"latest":"default"}

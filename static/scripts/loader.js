@@ -1,37 +1,39 @@
 var currentColumns = 0;
 var currentRows = 0;
-let overlayOpen = false;
+let overlayClose = () => {};
 let currentWidgetCount = 0;
 let data = {};
 let workspace = {};
+const widgetParts =                 ["Name", "ID"]
+const extraWidgetParts =            ["X", "Y", "Width", "Height"]
+const extraWidgetPartsDefaults =    [() => currentColumns, () => currentRows, 1, 1]
 
-function setUp() {
+/**
+ * Sets up the app for execution.
+ */
+async function setUp() {
     const container = document.getElementById('container');
-    container.style.gridTemplateColumns = 'minmax(0, 1fr)';
+    //container.style.gridTemplateColumns = 'minmax(0, 1fr)';
 
-    if (window.api.fs.exists('data.json')) {
+    if (await window.api.fs.exists('data.json') != true) {
+        window.api.log('data.json not found: ' + await window.api.fs.exists('data.json'));
         window.api.fs.save('data.json', JSON.stringify({ workspaces: { default: { path: "workspaces/default.json" } }, latest: "default" }));
         window.api.fs.mkdir('workspaces');
         window.api.fs.save('workspaces/default.json', JSON.stringify({ name: "Default Workspace", widgets: [] }));
     }
 
-    data = window.api.fs.read('data.json');
-    workspace = window.api.fs.read(data.workspace[data.latest].path);
+    const decoder = new TextDecoder();
+    data = JSON.parse(decoder.decode(await window.api.fs.read('data.json')));
+    workspace = JSON.parse(decoder.decode(await window.api.fs.read(data.workspaces[data.latest].path)));
 
-    workspace.widgets.forEach(widget => {
-        loadWidget(
-            document.getElementById('container'),
-            widget.name,
-            widget.id,
-            widget.settings,
-            widget.data,
-        );
+    workspace.widgets.forEach(async widget => {
+        await loadWidget(container, widget.name, widget.id, widget.settings, widget.data);
     });
 }
 
 /**
- * Loads the widget given into the container.
- * @param {HTMLDivElement} parent Container to load into in the form of a div.
+ * Loads the widget given into the parent.
+ * @param {HTMLDivElement} parent parent to load into in the form of a div.
  * @param {string} name Name of the widget to loading.
  * @param {string} id ID of the widget.
  * @param {object} settings The widget's settings.
@@ -49,13 +51,23 @@ async function loadWidget(parent, name, id, settings, data, onError=(err)=>conso
     const prevColumns = currentRows;
     const prevRows = currentRows;
 
+    var foundY;
     var coords = '';
     if (settingsHas('x')) { settings.x += 1; coords += settings.x; }
-    else { coords += '/0' }
+    else { 
+        for (let y = 1; y <= currentRows; y++) {
+            for (let x = 1; x <= currentColumns; x++) {
+                if (document.getElementById(x + '/' + y) == null) { coords += x; foundY = y; }
+            }
+        }
+        currentRows += 1;
+        foundY = currentRows;
+        coords += 1;
+    }
 
     if (settingsHas('y')) { settings.y += 1; coords += '/' + settings.y; }
-    else { coords += '/' + '0'; }
-
+    else { coords += '/' + foundY; }
+    console.log(coords);
     currentColumns += (parseInt(coords.split("/")[0]) - currentColumns) >= 0 ? parseInt(coords.split("/")[0]) - currentColumns : 0;
     currentRows += (parseInt(coords.split("/")[1]) - currentRows) >= 0 ? parseInt(coords.split("/")[1]) - currentRows : 0;
 
@@ -135,29 +147,42 @@ async function loadWidget(parent, name, id, settings, data, onError=(err)=>conso
     container.appendChild(subdiv);
     container.appendChild(iframe);
 
-    document.getElementById(`${container.id}-btn`).addEventListener('click', (ev) => {
-        if (overlayOpen === true) { 
-            var overlay = document.getElementById(`${container.id}-overlay`);
-            overlay.parentNode.removeChild(overlay);
-            overlayOpen = false;
-        } else {
-            const overlay = document.createElement('div');
-            overlay.className = "overlay";
-            overlay.id = `${container.id}-overlay`;
-            overlay.style.visibility = 'visible';
-            document.body.appendChild(overlay);
-            overlayOpen = true;
-
-            settingsArray.forEach((value) => {
-                const div = document.createElement('div');
-                div.style.display = 'flex';
-                div.style.flexDirection = 'row';
-                div.style.width = '100%';
-                div.appendChild(document.createElement('p').innerText = value[0]);
-                div.appendChild((document.createElement('input')).value = value[1]);
-            });
-        }
-    });
+    
 }
 
-function newWidget() {}
+/**
+ * Creates a new widget.
+ */
+function newWidget() {
+    const overlay = document.createElement('div');
+    overlay.className = 'overlay';
+
+    overlayClose();
+
+    widgetParts.forEach((part) => {
+        if (String(part) == "ID") {
+            
+            return;
+        }
+        part = String(part);
+        const subdiv = document.createElement('div');
+        subdiv.className = 'horizontal-subdiv';
+        const p = document.createElement('p');
+        p.innerText = part;
+        const input = document.createElement('input');
+        input.id = part.toLowerCase();
+        subdiv.appendChild(p);
+        subdiv.appendChild(input);
+        overlay.appendChild(subdiv);
+    });
+
+    const submit = document.createElement('button');
+    submit.innerText = "Create";
+    submit.addEventListener('click', (ev) => {
+        loadWidget(document.getElementById('container'), document.getElementById('name').value, document.getElementById('id').value, {}, {});
+        closeOverlay();
+    });
+    overlay.appendChild(submit);
+    document.body.appendChild(overlay);
+    closeOverlay = () => overlay.remove();
+}
