@@ -6,5 +6,6 @@
     },
     "settings": {},
     "data": {},
-    "name": "Embed"
+    "name": "Embed",
+    "end": "endfunc"
 }
