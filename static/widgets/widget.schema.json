@@ -38,7 +38,8 @@
                 }
             }
         },
-        "name": {"type": "string"}
+        "name": {"type": "string"},
+        "end": {"type": "string"}
     },
     "required": ["entry", "settings", "data", "name"]
 }

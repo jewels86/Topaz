@@ -11,5 +11,6 @@
             "type": "string"
         }
     },
-    "name": "Notepad"
+    "name": "Notepad",
+    "end": "endfunc"
 }

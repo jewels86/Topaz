@@ -4,11 +4,14 @@ let overlayClose = () => {};
 let currentWidgetCount = 0;
 let data = {};
 let workspace = {};
+let path;
+let endFunctions = [];
 const widgetParts =                 ["Name", "ID"];
 const extraWidgetParts =            ["X", "Y", "Width", "Height"];
 const extraWidgetPartsDefaults =    [() => 0, () => parseInt(currentRows), () => 1, () => 1];
 const column = ' minmax(28%, 1fr)'
 const row = ' minmax(28%, 1fr)';
+let highestID = 0
 
 function forAllBlocks(f) {
     for (let y = 1; y <= currentRows; y++) {
@@ -18,6 +21,21 @@ function forAllBlocks(f) {
     }
 } 
 
+const endfunc = async () => {
+    window.api.log('Received "alert:end"');
+    const setSetting = (id, name, x) => workspace.widgets.find(x => x.wid == id).settings[name] = x;
+    const setData = (id, name, x) => workspace.widgets.find(x => x.wid == id).data[name] = x;
+    endFunctions.forEach((x, i) => x({ 
+        setSetting: (name, x) => setSetting(i, name, x), 
+        setData: (name, x) => setData(i, name, x), 
+        log: window.api.log 
+    }));
+    await window.api.fs.write(path, JSON.stringify(workspace));
+    await window.api.fs.write('data.json', JSON.stringify(data));
+    window.api.log('Finished (endfunc)');
+    await window.api.respondToEnd();
+}
+
 /**
  * Sets up the app for execution.
  */
@@ -26,18 +44,22 @@ async function setUp() {
     //container.style.gridTemplateColumns = 'minmax(0, 1fr)';
 
     if (await window.api.fs.exists('data.json') != true) {
-        window.api.fs.save('data.json', JSON.stringify({ workspaces: { default: { path: "workspaces/default.json" } }, latest: "default" }));
+        window.api.fs.write('data.json', JSON.stringify({ workspaces: { default: { path: "workspaces/default.json" } }, latest: "default" }));
         window.api.fs.mkdir('workspaces');
-        window.api.fs.save('workspaces/default.json', JSON.stringify({ name: "Default Workspace", widgets: [] }));
+        window.api.fs.write('workspaces/default.json', JSON.stringify({ name: "Default Workspace", widgets: [] }));
     }
 
     const decoder = new TextDecoder();
     data = JSON.parse(decoder.decode(await window.api.fs.read('data.json')));
     workspace = JSON.parse(decoder.decode(await window.api.fs.read(data.workspaces[data.latest].path)));
+    path = data.workspaces[data.latest].path;
 
     workspace.widgets.forEach(async widget => {
-        await loadWidget(container, widget.name, widget.id, widget.settings, widget.data);
+        await loadWidget(container, widget.name, widget.id, widget.settings, widget.data, highestID);
+        highestID++;
     });
+
+    window.api.setEndFunc(endfunc);
 }
 
 /**
@@ -50,12 +72,12 @@ async function setUp() {
  * @param {function} onError A function to be performed if an error occurs.
  * @returns {bool} True if successful, false if not.  
  */
-async function loadWidget(parent, name, id, settings, data, onError=(err)=>console.error(err)) {
+async function loadWidget(parent, name, id, settings, _data, wid, onError=(err)=>console.error(err)) {
     if (name == null || settings == null) { onError(new Error("One required parameter is null.")); return false; }
     if (name.length = 0) { onError(new Error("'name' parameter is empty.")); return false; }
 
     const settingsHas = (x) => Object.hasOwn(settings, x);
-    const dataHas = (x) => Object.hasOwn(data, x);
+    const dataHas = (x) => Object.hasOwn(_data, x);
 
     const prevColumns = currentRows;
     const prevRows = currentRows;
@@ -125,7 +147,7 @@ async function loadWidget(parent, name, id, settings, data, onError=(err)=>conso
     if (widgetData == null) { throw new Error("Widget data can't be found."); }
 
     const iframe = document.createElement('iframe');
-    iframe.src = `../static/widgets/${id}/${widgetData.entry.path}`;
+    iframe.src = `../static/widgets/${id}/${widgetData.entry.path}?id=${wid}`;
 
     var settingsArray = Object.keys(settings).map((key) => [key, settings[key]]);
     settingsArray.forEach((setting, index) => {
@@ -135,28 +157,34 @@ async function loadWidget(parent, name, id, settings, data, onError=(err)=>conso
             return; 
         }
 
-        if (index === 0) { iframe.src += '?'; }
-        iframe.src += `${setting[0]}=${setting[1]}`;
-        if (!(index === settingsArray.length)) { iframe.src += '&'; }
+        iframe.src += `&${setting[0]}=${setting[1]}`;
     });
-    var dataArray = Object.keys(data).map((key) => [key, data[key]]);
+    var dataArray = Object.keys(_data).map((key) => [key, _data[key]]);
     dataArray.forEach((value, index) => {
         //if (Object.hasOwn(widgetData.data, value[0])) { return; }
+        console.log(widgetData.data);
+        console.log(value);
+        console.log(_data);
+        console.log(widgetData.data[value[0]]);
         if (widgetData.data[value[0]].type != typeof value[1]) { 
             //console.log(`Data value ${value[1]} (${typeof value[1]} - from ${value[0]}) is not of type ${widgetData.data[value[0]].type}`);
             if (Object.hasOwn(widgetData.data[value[0]], 'default')) { value[1] == widgetData.data[value[0]].default; }
             else { return; }
         }
 
-        if (index === 0) { if (iframe.src.includes('?')) { iframe.src += "&"; } else { iframe.src += "?"; } }
-        iframe.src += `${value[0]}=${value[1]}`;
-        if (!(index === dataArray.length)) { iframe.src += '&'; }
+        iframe.src += `&${value[0]}=${value[1]}`;
     });
 
     container.appendChild(subdiv);
     container.appendChild(iframe);
 
-    
+    if (Object.hasOwn(widgetData, 'end')) {
+        iframe.contentWindow.onload = (ev) => {
+            console.log(iframe.contentWindow[widgetData.end]);
+            endFunctions.push(iframe.contentWindow[widgetData.end]);
+        }
+        
+    }
 }
 
 function trim() {
@@ -242,7 +270,15 @@ async function newWidget() {
         const settings = {};
         extraWidgetParts.forEach((part, index) => { settings[part.toLowerCase()] = document.getElementById(part.toLowerCase()).value == '' ? extraWidgetPartsDefaults[index]() : parseInt(document.getElementById(part.toLowerCase()).value); })
         console.log(settings);
-        loadWidget(document.getElementById('container'), document.getElementById('name').value, document.getElementById('id').value, settings, {});
+        loadWidget(document.getElementById('container'), document.getElementById('name').value, document.getElementById('id').value, settings, {}, highestID);
+        workspace.widgets.push({ 
+            name: document.getElementById('name').value,
+            id: document.getElementById('id').value,
+            settings: settings,
+            wid: highestID,
+            data: {}
+        });
+        highestID++;
         trim();
         closeOverlay();
     });

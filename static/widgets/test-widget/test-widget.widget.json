@@ -8,5 +8,6 @@
         "setting1": {"type": "string", "default": ""}
     },
     "data": {},
-    "name": "Test Widget"
+    "name": "Test Widget",
+    "end": "endfunc"
 }

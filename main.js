@@ -13,9 +13,10 @@ app.whenReady().then(() => {
     ipcMain.handle('req:fs:exists',     (ev, args) => { return fs.existsSync(args) })
     ipcMain.handle('req:fs:mkdir',      (ev, args) => { return fs.mkdirSync(args) })
     ipcMain.handle('req:fs:ls',         (ev, args) => { return fs.readdirSync(args) })
-    ipcMain.handle('log',               (ev, args) => { return console.log(args) })
+    ipcMain.handle('log',               (ev, args) => { console.log(args) })
+    ipcMain.handle('emit',              (ev, args) => { ipcMain.emit(args) })
 
-    const win = new BrowserWindow({
+    let win = new BrowserWindow({
         width: defaults.width,
         height: defaults.height,
         webPreferences: { preload: path.join(process.cwd(), 'preload.js') }
@@ -27,7 +28,9 @@ app.whenReady().then(() => {
     win.once('ready-to-show', () => win.show())
     win.maximize()
 
-    app.on('window-all-closed', () => {
-        app.quit()
+    win.on('close', () => {
+        //win.hide()
+        ipcMain.handle('res:end', () => app.exit(0))
+        //win = null
     })
 })
