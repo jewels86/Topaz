@@ -1,10 +1,13 @@
 .widget {
     display: flex;
     flex-direction: column;
-    border: solid;
-    margin: 1%;
+    /*border: solid;*/
+    background: white;
+    border-radius: 10px;
+    margin: 0.5vh 0.5vw;
     min-height: 28%;
     min-width: 28%;
+    box-shadow: 0px 0px 12px 1px black;
 }
 .widget .subdiv {
     display: flex;

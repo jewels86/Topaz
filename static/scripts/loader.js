@@ -6,20 +6,24 @@ let data = {};
 let workspace = {};
 let path;
 let endFunctions = [];
+let highestID = 0;
 const widgetParts =                 ["Name", "ID"];
 const extraWidgetParts =            ["X", "Y", "Width", "Height"];
 const extraWidgetPartsDefaults =    [() => 0, () => parseInt(currentRows), () => 1, () => 1];
 const column = ' minmax(28%, 1fr)'
 const row = ' minmax(28%, 1fr)';
-let highestID = 0
+const setSetting = (id, name, x) => workspace.widgets.find(x => x.wid == id).settings[name] = x;
+const setData = (id, name, x) => workspace.widgets.find(x => x.wid == id).data[name] = x;
+const has = (o, v) => Object.hasOwn(o, v); 
+const tryTo = (x) => { try { x(); return true; } catch { return false; }}
 
-function forAllBlocks(f) {
-    for (let y = 1; y <= currentRows; y++) {
-        for (let x = 1; x <= currentColumn; x++) {
-            f(document.getElementById(x + '/' + y));
-        }
-    }
-} 
+function validateSettings(wid, s = null) {
+    const settings = s == null ? workspace.widgets.find(x => x.wid == wid).settings : s;
+    settings.x = parseInt(settings.x);
+    settings.y = parseInt(settings.y);
+    settings.width = parseInt(settings.width);
+    settings.height = parseInt(settings.height);
+}
 
 const endfunc = async () => {
     window.api.log('Received "alert:end"');
@@ -55,11 +59,62 @@ async function setUp() {
     path = data.workspaces[data.latest].path;
 
     workspace.widgets.forEach(async widget => {
-        await loadWidget(container, widget.name, widget.id, widget.settings, widget.data, highestID);
+        await loadWidget(container, widget.name, widget.id, structuredClone(widget.settings), widget.data, highestID);
         highestID++;
     });
 
     window.api.setEndFunc(endfunc);
+}
+
+async function openSettings(wid) {
+    overlayClose();
+
+    const overlay = document.createElement('div');
+    overlay.className = "overlay";
+    
+    overlayClose = () => overlay.remove();
+
+    const id = workspace.widgets.find(x => x.wid == wid).id;
+    const widgetData = JSON.parse(await (await fetch(`../static/widgets/${id}/${id}.widget.json`)).text());
+
+    Object.keys(widgetData.settings).map(x => [x, workspace.widgets.filter(x => x.wid == wid)[0].settings[x]]).concat(Object.keys(workspace.widgets.find(x => x.wid == wid).settings).map(x => [x, workspace.widgets.find(x => x.wid == wid).settings[x]])).forEach(x => {
+        if (x[1] == undefined) {
+            x[1] = widgetData.settings[x[0]].default || '';
+        }
+        
+        const p = document.createElement('p');
+        p.innerText = x[0].replace(x[0][0], x[0][0].toUpperCase());
+        const input = document.createElement('input');
+        input.value = x[1];
+        const div = document.createElement('div');
+        div.className = 'horizontal-subdiv';
+        div.appendChild(p);
+        div.appendChild(input);
+        overlay.appendChild(div);
+
+        input.addEventListener('change', () => { 
+            setSetting(wid, x[0], input.value);
+            console.log(workspace.widgets.find(x => x.wid == wid).settings)
+            validateSettings(wid);
+            reloadWidget(wid, structuredClone(workspace.widgets.find(x => x.wid == wid).settings));
+        });
+    });
+
+    const deletebtn = document.createElement('button');
+    deletebtn.innerText = "Delete";
+    overlay.appendChild(deletebtn);
+    deletebtn.addEventListener('click', () => {
+        workspace.widgets.splice(workspace.widgets.indexOf(workspace.widgets.find(x => x.wid == wid)));
+        document.querySelector(`[data-wid='${wid}']`).childNodes.forEach(x => x.remove());
+        document.querySelector(`[data-wid='${wid}']`).childNodes.forEach(x => x.remove());
+        document.querySelector(`[data-wid='${wid}']`).className = '';
+        document.querySelector(`[data-wid='${wid}']`).style = '';
+    });
+
+    document.body.appendChild(overlay);
+    document.body.addEventListener('click', ev => {
+        if (ev.target.id == 'container' || (ev.target.tagName == 'div' && ev.target.id != 'overlay')) { overlayClose(); } 
+    });
 }
 
 /**
@@ -74,8 +129,8 @@ async function setUp() {
  */
 async function loadWidget(parent, name, id, settings, _data, wid, onError=(err)=>console.error(err)) {
     if (name == null || settings == null) { onError(new Error("One required parameter is null.")); return false; }
-    if (name.length = 0) { onError(new Error("'name' parameter is empty.")); return false; }
-
+    if (name.length == 0) { onError(new Error("'name' parameter is empty.")); return false; }
+    // fix load
     const settingsHas = (x) => Object.hasOwn(settings, x);
     const dataHas = (x) => Object.hasOwn(_data, x);
 
@@ -102,14 +157,17 @@ async function loadWidget(parent, name, id, settings, _data, wid, onError=(err)=
     currentColumns += (parseInt(coords.split("/")[0]) - currentColumns) >= 0 ? parseInt(coords.split("/")[0]) - currentColumns : 0;
     currentRows += (parseInt(coords.split("/")[1]) - currentRows) >= 0 ? parseInt(coords.split("/")[1]) - currentRows : 0;
 
+    currentColumns += settingsHas('width') ? settings.width - 1 : 0;
+    currentRows += settingsHas('height') ? settings.height - 1 : 0;
+
     for (let y = prevRows; y < currentRows; y++) {
         parent.style.gridTemplateRows += row;
     }
     for (let x = prevColumns; x < currentColumns; x++) {
         parent.style.gridTemplateColumns += column;
     }
-    for (let x = 1; x <= currentColumns; x++) {
-        for (let y = 1; y <= currentRows; y++) {
+    for (let x = 1; x <= currentColumns + (has(settings, 'width') ? settings.width - 1 : 0); x++) {
+        for (let y = 1; y <= currentRows + (has(settings, 'height') ? settings.height - 1 : 0); y++) {
             if (document.getElementById(x + '/' + y) != null) { continue; }
             const tmp = document.createElement('div');
             tmp.id = x + '/' + y;
@@ -117,12 +175,12 @@ async function loadWidget(parent, name, id, settings, _data, wid, onError=(err)=
         }
     }
 
-    for (let x = coords.split('/')[0] + 1; x <= coords.split('/')[0] + (settingsHas('width') ? settings.width : 1); x++) {
+    for (let x = coords.split('/')[0] + 1; x <= coords.split('/')[0]; x++) {
         const block = document.getElementById(x + '/' + coords.split('/')[1]);
         if (block == null) { continue; }
         block.remove();
     }
-    for (let y = coords.split('/')[1] + 1; y <= coords.split('/')[1] + (settingsHas('height') ? settings.height : 1); y++) {
+    for (let y = coords.split('/')[1] + 1; y <= coords.split('/')[1]; y++) {
         const block = document.getElementById(coords.split('/')[0] + '/' + y);
         if (block == null) { continue; }
         block.remove();
@@ -161,20 +219,32 @@ async function loadWidget(parent, name, id, settings, _data, wid, onError=(err)=
     });
     var dataArray = Object.keys(_data).map((key) => [key, _data[key]]);
     dataArray.forEach((value, index) => {
-        //if (Object.hasOwn(widgetData.data, value[0])) { return; }
-        console.log(widgetData.data);
-        console.log(value);
-        console.log(_data);
-        console.log(widgetData.data[value[0]]);
         if (widgetData.data[value[0]].type != typeof value[1]) { 
-            //console.log(`Data value ${value[1]} (${typeof value[1]} - from ${value[0]}) is not of type ${widgetData.data[value[0]].type}`);
-            if (Object.hasOwn(widgetData.data[value[0]], 'default')) { value[1] == widgetData.data[value[0]].default; }
-            else { return; }
+            console.log(`Data value ${value[1]} (${typeof value[1]} - from ${value[0]}) is not of type ${widgetData.data[value[0]].type}`);
+            return;
         }
 
         iframe.src += `&${value[0]}=${value[1]}`;
     });
 
+    var vendorSA = Object.keys(widgetData.settings).map(x => [x, widgetData.settings[x]]);
+    vendorSA.forEach(s => {
+        if (!iframe.src.includes(s[0])) {
+            if (Object.hasOwn(s[1], 'default')) {
+                iframe.src += `&${s[0]}=${s[1].default}`;
+            }
+        }
+    });
+    var vendorDA = Object.keys(widgetData.data).map(x => [x, widgetData.data[x]]);
+    vendorDA.forEach(d => {
+        if (!iframe.src.includes(d[0])) {
+            if (Object.hasOwn(d[1], 'default')) {
+                iframe.src += `&${d[0]}=${d[1].default}`;
+            }
+        }
+    });
+
+    container.dataset.wid = wid;
     container.appendChild(subdiv);
     container.appendChild(iframe);
 
@@ -183,22 +253,115 @@ async function loadWidget(parent, name, id, settings, _data, wid, onError=(err)=
             console.log(iframe.contentWindow[widgetData.end]);
             endFunctions.push(iframe.contentWindow[widgetData.end]);
         }
-        
     }
+
+    document.getElementById(`${container.id}-btn`).addEventListener('click', () => openSettings(wid));
+    //trim();
+}
+
+async function reloadWidget(wid, settings) {
+    /**
+     * @type {HTMLDivElement}
+     */
+    const container = document.querySelector(`[data-wid='${wid}']`);
+    // make width work - copy load
+    console.log(settings);
+    if (has(settings, 'x')) {
+        console.log(`Found x (${settings.x} ${container.id.split('/')[0] != settings.x ? '!=' : '=='}) ${container.id.split('/')[0]}`);
+        settings.x++;
+        const oldx = parseInt(container.id.split('/')[0]);
+        if (oldx != settings.x) {
+            container.id = settings.x + '/' + container.id.split('/')[1];
+            container.style.gridColumn = settings.x;
+        } 
+        delete settings.x;
+    }
+
+    if (has(settings, 'y')) {
+        settings.y++;
+        const oldy = parseInt(container.id.split('/')[1]);
+        if (oldy != settings.y) {
+            container.id = container.id.split('/')[0] + '/' + settings.y;
+            container.style.gridRow = settings.y;
+        } 
+        delete settings.x;
+    }
+
+    const coords = container.id;
+    const parent = container.parentElement;
+
+    const prevColumns = currentColumns;
+    const prevRows = currentRows;
+
+    currentColumns += (parseInt(coords.split("/")[0]) - currentColumns) >= 0 ? parseInt(coords.split("/")[0]) - currentColumns : 0;
+    currentRows += (parseInt(coords.split("/")[1]) - currentRows) >= 0 ? parseInt(coords.split("/")[1]) - currentRows : 0;
+
+    currentColumns += has(settings, 'width') ? settings.width - 1 : 0;
+    currentRows += has(settings, 'height') ? settings.height - 1 : 0;
+
+    for (let y = prevRows; y < currentRows; y++) {
+        parent.style.gridTemplateRows += row;
+    }
+    for (let x = prevColumns; x < currentColumns; x++) {
+        parent.style.gridTemplateColumns += column;
+    }
+    for (let x = 1; x <= currentColumns; x++) {
+        for (let y = 1; y <= currentRows; y++) {
+            if (document.getElementById(x + '/' + y) != null) { continue; }
+            const tmp = document.createElement('div');
+            tmp.id = x + '/' + y;
+            parent.appendChild(tmp);
+        }
+    }
+
+    for (let x = coords.split('/')[0] + 1; x <= coords.split('/')[0]; x++) {
+        const block = document.getElementById(x + '/' + coords.split('/')[1]);
+        if (block == null) { continue; }
+        block.remove();
+    }
+    for (let y = coords.split('/')[1] + 1; y <= coords.split('/')[1]; y++) {
+        const block = document.getElementById(coords.split('/')[0] + '/' + y);
+        if (block == null) { continue; }
+        block.remove();
+    }
+
+    container.style.gridColumn = `${coords.split('/')[0]} / ${has(settings, 'width') ? parseInt(coords.split('/')[0]) + settings.width : parseInt(coords.split('/')[0])}`;
+    container.style.gridRow = `${coords.split('/')[1]} / ${has(settings, 'height') ? parseInt(coords.split('/')[1]) + settings.height : parseInt(coords.split('/')[1])}`;
+
+    tryTo(() => delete settings.width);
+    tryTo(() => delete settings.height);
+
+    const params = new URLSearchParams(container.childNodes[1].src);
+    Object.keys(settings).map((v) => [v, settings[v]]).forEach(setting => params.set(setting[0], setting[1]));
+    container.childNodes[1].src = decodeURIComponent(params.toString());
+    //trim();
 }
 
 function trim() {
+    console.log(currentRows);
     const container = document.getElementById('container');
     const getgtc = () => container.style.gridTemplateColumns;
     for (; currentColumns < getgtc().split('minmax').length - 1;) {
-        console.log(currentColumns);
-        console.log(getgtc().split(column).length - 1);
-        container.style.gridTemplateColumns = getgtc().substring(0, getgtc().lastIndexOf('minmax'))
-        //forAllBlocks(x => { if (parseInt(x.id.split('/')[0]) )})
+        container.style.gridTemplateColumns = getgtc().substring(0, getgtc().lastIndexOf('minmax'));
     }
     const getgtr = () => container.style.gridTemplateRows;
-    for (; currentRows < getgtr().split(row).length - 1;) {
-        container.style.gridTemplateRows = getgtr().substring(0, getgtr().lastIndexOf(row));
+    for (; currentRows < getgtr().split('minmax').length - 1;) {
+        container.style.gridTemplateRows = getgtr().substring(0, getgtr().lastIndexOf('minmax'));
+    }
+    var highestX = 0;
+    var highestY = 0;
+    workspace.widgets.map(x => x.settings).forEach(x => {
+        if (x.x + x.width - 1 > highestX) { highestX = x.x + x.width - 1; }
+        if (x.y + x.height - 1 > highestY) { highestY = x.y + x.height - 1; }
+    });
+    
+    for (; currentColumns > highestX;) {
+        currentColumns -= 1;
+        container.style.gridTemplateColumns = getgtc().substring(0, getgtc().lastIndexOf('minmax'));
+    }
+    for (; currentRows > highestY;) {
+        currentRows -= 1;
+        container.style.gridTemplateRows = getgtr().substring(0, getgtr().lastIndexOf('minmax'));
     }
 }
 
@@ -222,7 +385,6 @@ async function newWidget() {
                 option.value = id;
                 option.innerText = widgetData.name;
                 stack.appendChild(option);
-                
             });
             const subdiv = document.createElement('div');
             subdiv.className = 'horizontal-subdiv';
@@ -266,11 +428,16 @@ async function newWidget() {
 
     const submit = document.createElement('button');
     submit.innerText = "Create";
-    submit.addEventListener('click', (ev) => {
+    submit.addEventListener('click', async (ev) => {
         const settings = {};
         extraWidgetParts.forEach((part, index) => { settings[part.toLowerCase()] = document.getElementById(part.toLowerCase()).value == '' ? extraWidgetPartsDefaults[index]() : parseInt(document.getElementById(part.toLowerCase()).value); })
         console.log(settings);
-        loadWidget(document.getElementById('container'), document.getElementById('name').value, document.getElementById('id').value, settings, {}, highestID);
+        await loadWidget(document.getElementById('container'), document.getElementById('name').value, document.getElementById('id').value, settings, {}, highestID);
+        const container = document.querySelector(`[data-wid='${highestID}']`);
+        settings.x = parseInt(container.style.gridColumn.split('/')[0]) - 1;
+        settings.y = parseInt(container.style.gridRow.split('/')[0]) - 1;
+        settings.width = parseInt(container.style.gridColumn.split('/')[1]) - parseInt(container.style.gridColumn.split('/')[0]);
+        settings.height = parseInt(container.style.gridRow.split('/')[1]) - parseInt(container.style.gridRow.split('/')[0]);
         workspace.widgets.push({ 
             name: document.getElementById('name').value,
             id: document.getElementById('id').value,
