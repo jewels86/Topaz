@@ -1,0 +1,34 @@
+:root {
+    --primary: #000000;
+    --secondary: #000000;
+    --accent: #000000;
+    --accent2: #000000;
+    --text: #000000;
+    --font: arial;
+    --background: #000000;
+}
+
+html, body {
+    background: var(--background);
+    font-family: var(--font);
+    color: var(--text);
+
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+footer p {
+    padding: 2px 4px 2px 4px;
+    margin: 0;
+    font-size: 12px;
+    /*width: fit-content;*/
+}
+
+.stat-btn {
+    background: inherit;
+    border: none;
+}
+.stat-btn:hover {
+    background: var(--secondary);
+}

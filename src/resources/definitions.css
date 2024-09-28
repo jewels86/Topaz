@@ -1,0 +1,46 @@
+.justify-left {
+    justify-self: left;
+}
+.justify-right {
+    justify-self: right;
+}
+
+.primary {
+    color: var(--primary);
+}
+.secondary {
+    color: var(--secondary);
+}
+.back-primary {
+    background: var(--primary);
+}
+.back-secondary {
+    background: var(--secondary);
+}
+
+.space-between {
+    justify-content: space-between;
+}
+
+.bottom {
+    position: absolute;
+    bottom: 0;
+}
+
+.horizontal-flex, .horizontal-flex-right, .horizontal-flex-left {
+    display: flex;
+    flex-direction: row;
+}
+.horizontal-flex-left {
+    justify-items: left;
+}
+.horizontal-flex-right {
+    justify-items: right;
+}
+
+.height-fit {
+    height: fit-content;
+}
+.width-full {
+    width: 100%;
+}

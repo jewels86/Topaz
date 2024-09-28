@@ -1,0 +1,38 @@
+{
+    "mainfile": {
+        "profiles": ["profiles/main-profile.json"],
+        "workspaces": ["workspaces/main-workspace.json"],
+        "latest_profile": 0,
+        "latest_workspace": 0
+    },
+    "profile": {
+        "theme": "data/themes/dark.json",
+        "name": "Profile",
+        "statusbar": [
+            {
+                "label": "[current_profile_name]",
+                "tooltip": null,
+                "interaction": null
+            }
+        ],
+        "known_widgets": [
+            {"name": "Calendar", "id": "calendar", "path": "../data/widgets/calendar.json"},
+            {"name": "Notepad", "id": "notepad", "path": "../data/widgets/notepad.json"}
+        ]
+    },
+    "workspace": {
+        "name": "Workspace",
+        "theme": "data/themes/dark.json",
+        "theme_dominance": false,
+        "statusbar": [
+            {
+                "label": "[current_workspace_name]",
+                "tooltip": null,
+                "interaction": null
+            }
+        ],
+        "widgets": [
+
+        ]
+    }
+}

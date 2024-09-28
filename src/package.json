@@ -1,0 +1,17 @@
+{
+  "name": "azotic-topaz",
+  "version": "1.0.0",
+  "description": "A customizable, virtual workspace.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Gold Team",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "devDependencies": {
+    "electron": "^32.1.2"
+  },
+  "dependencies": {
+    "keytar": "^7.9.0"
+  }
+}

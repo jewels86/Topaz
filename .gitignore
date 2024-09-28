@@ -1,6 +1,4 @@
 node_modules
-package-lock.json
-.vs
-.vscode
-data.json
-workspaces
+**/main.json
+**/profiles
+**/workspaces

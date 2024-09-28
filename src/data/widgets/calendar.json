@@ -1,0 +1,15 @@
+{
+    "name": "Calendar",
+    "author": "Gold Team",
+
+    "title": "Calendar",
+
+    "settings": [],
+    "data": [
+        {
+            "id": "dates",
+            "type": "array",
+            "initial_value": []
+        }
+    ]
+}
