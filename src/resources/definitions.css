@@ -17,6 +17,12 @@
 .back-secondary {
     background: var(--secondary);
 }
+.border-primary {
+    border-color: var(--primary);
+}
+.border-secondary {
+    border-color: var(--secondary);
+}
 
 .space-between {
     justify-content: space-between;
@@ -37,10 +43,34 @@
 .horizontal-flex-right {
     justify-items: right;
 }
+.vertical-flex {
+    display: flex;
+    flex-direction: column;
+}
 
 .height-fit {
     height: fit-content;
 }
+.height-max {
+    min-height: 100%;
+}
+.height-full {
+    height: 100%;
+}
 .width-full {
     width: 100%;
+}
+
+.grid {
+    display: grid;
+    gap: 4px;
+}
+
+.grow {
+    flex-grow: 1;
+}
+
+.no-extra {
+    padding: 0;
+    margin: 0;
 }

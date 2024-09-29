@@ -16,8 +16,8 @@
             }
         ],
         "known_widgets": [
-            {"name": "Calendar", "id": "calendar", "path": "../data/widgets/calendar.json"},
-            {"name": "Notepad", "id": "notepad", "path": "../data/widgets/notepad.json"}
+            {"name": "Calendar", "id": "calendar", "path": "data/widgets/calendar.json"},
+            {"name": "Notepad", "id": "notepad", "path": "data/widgets/notepad.json"}
         ]
     },
     "workspace": {

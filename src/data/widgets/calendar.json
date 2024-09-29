@@ -1,8 +1,7 @@
 {
     "name": "Calendar",
     "author": "Gold Team",
-
-    "title": "Calendar",
+    "path": "../data/widgets/calendar/index.html",
 
     "settings": [],
     "data": [
