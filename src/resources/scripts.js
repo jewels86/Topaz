@@ -1,16 +1,22 @@
-const interpret = (x) => x.replace(/\[(.+)]/g, (m, v) => _vars[v] || "N/A");
-const getWidgetFromKnown = (id) => _vars.current_profile.known_widgets.filter(v => v.id == id)[0];
+const interpret = (x) => x.replace(/\[(.+)]/g, (m, v) => _vars[v] || "N/A"); // a function that allows strings to have vars embedded in them
+const getWidgetFromKnown = (id) => _data.current_profile.known_widgets.filter(v => v.id == id)[0]; // tries to get a widgets path and name from the known widgets in the profile
 const tryTo = (x) => {
     try { return x(); }
     catch { return null; }
-}
+} // function to execute a function inside a try/catch block (just to save time and space)
 
+/** 
+ * Sets the current theme.
+ *
+ * @param {string} path - The path to load the theme from
+ */
 async function setTheme(path) {
-    var root = document.querySelector(':root');
-    const theme = JSON.parse(await _api.read(path));
+    var root = document.querySelector(':root'); // gets the CSS variables from the document
+    const theme = JSON.parse(await _api.read(path)); // gets theme data 
 
-    if (theme == null || theme == '') return false;
+    if (theme == null || theme == {}) return false;
 
+    // sets CSS variables
     root.style.setProperty('--primary', theme.primary);
     root.style.setProperty('--secondary', theme.secondary);
     root.style.setProperty('--accent', theme.accent);
@@ -19,54 +25,68 @@ async function setTheme(path) {
     root.style.setProperty('--font', theme.font || 'arial');
     root.style.setProperty('--background', theme.background || theme.primary);
 
-    _vars.theme = theme;
+    _vars.theme = theme; // so widgets and the rest of the program know what the theme is
 
-    return true;
+    return true; // success
 }
 
+/** 
+ * Loads a profile from a given path.
+ *
+ * @param {string} path - The path to load from.
+ */
 async function loadProfile(path) {
-    const profile = JSON.parse(await _api.read(path));
+    const profile = JSON.parse(await _api.read(path)); // get the profile from the file
 
-    await setTheme(profile.theme);
+    await setTheme(profile.theme); // sets the theme to the profile's theme
 
-    window._vars.current_profile = profile;
-    _vars.current_profile_name = profile.name;
+    window._data.current_profile = profile; // set the profile var to the data 
+    _vars.current_profile_name = profile.name; // give the widgets the profile name
 }
+/** 
+ * Loads a workspace from a given path.
+ *
+ * @param {string} path - The path to load from.
+ */
 async function loadWorkspace(path) {
-    const workspace = JSON.parse(await _api.read(path));
+    const workspace = JSON.parse(await _api.read(path)); // get workspace data from the file
 
-    if (workspace.theme_dominance) setTheme(workspace.theme);
+    if (workspace.theme_dominance) setTheme(workspace.theme); // if workspace themes override profile themes, set it to the workspace theme
 
-    window._data.current_workspace_obj = workspace;
-    _vars.current_workspace_name = workspace.name;
-    _vars.current_workspace_theme = workspace.theme;
+    window._data.current_workspace = workspace; // set the variable
+    _vars.current_workspace_name = workspace.name; // give them the name
+    _vars.current_workspace_theme = workspace.theme; // give them the theme
 }
+/**
+ * Builds the bottom status bar.
+ */
 async function constructStatusBar() {
-    const footer = document.getElementById('footer');
+    const footer = document.getElementById('footer'); // get the bar's HTML
 
-    const interpret = (x) => x.replace(/\[(.+)]/g, (m, v) => _vars[v] || "N/A");
-    const setInnerText = (s, x) => {
+    const setInnerText = (s, x) => { // shorthand to set text
         x.innerText = interpret(s.label);
     } 
-    const setTooltip = (s, x) => {
+    const setTooltip = (s, x) => { // shorthand to set tooltips
         if (s.tooltip != null) x.title = interpret(x.tooltip);
     }
 
-    [..._vars.current_profile.statusbar, ..._vars.current_workspace.statusbar].forEach((stat) => {
-        if (stat.interaction != null) {
-            const btn = document.createElement('button');
-            btn.classList.add("stat-btn");
-            
-            setInnerText(stat, btn);
-            setTooltip(stat, btn);
+    [..._data.current_profile.statusbar, ..._vars.current_workspace.statusbar].forEach((stat) => { // for all the status bar items
+        if (stat.interaction != null) { // if its interactable
+            if (stat.interaction_type == "button") { // if it should be a button
+                const btn = document.createElement('button');
+                btn.classList.add("stat-btn");
+                
+                setInnerText(stat, btn);
+                setTooltip(stat, btn);
 
-            btn.onclick = (ev) => {
+                btn.onclick = (ev) => {
 
+                }
+
+                footer.appendChild(btn);
             }
-
-            footer.appendChild(btn);
         }
-        else {
+        else { // if its just text
             const p = document.createElement('p');
 
             setInnerText(stat, p);
@@ -74,33 +94,38 @@ async function constructStatusBar() {
 
             footer.appendChild(p);
         }
+        // TODO: Finish this
     })
 }
 
+/** 
+ * Runs on start.
+ */
 async function startup() {
-    if (!(await _api.exists('main.json'))) await handleFirstTime();
+    if (!(await _api.exists('main.json'))) await handleFirstTime(); // handle the first time if it is the first time
 
-    window._fns = {}; // functions accessible to non-trusted components
-    window._vars = {}; // variables accessible to non-trusted components
-    window._data = {}; // private data for the app itself (not accessible to non-trusted components)
+    window._fns = {}; // functions accessible to widgets or status bar items
+    window._vars = {}; // variables accessible to widgets or status bar items
+    window._data = {}; // private data for the app itself (not accessible to widgets or status bar items)
     window._vars.grid = []; // grid that holds placeholders (numbers that represent widgets)
     window._data.grid_ref = {}; // number representation -> actual widget
     window._vars.grid_height = 0; // height of the grid
     window._vars.grid_width = 0; // width of the grid
     window._vars.next_n = 0; // widget numbers count
 
-    window._data.mainfile = JSON.parse(await window._api.read('main.json'));
-    window._data.current_profile = _data.mainfile.profiles[_data.mainfile.latest_profile];
-    window._data.current_workspace = _data.mainfile.workspaces[_data.mainfile.latest_profile];
+    window._data.mainfile = JSON.parse(await window._api.read('main.json')); // read the mainfile (it holds all the paths for profiles and workspaces)
+    window._data.current_profile_path = _data.mainfile.profiles[_data.mainfile.latest_profile]; // set the profile to the latest one
+    window._data.current_workspace_path = _data.mainfile.workspaces[_data.mainfile.latest_profile]; // set the workspace to the latest one
 
-    await loadProfile(_data.current_profile);
-    await loadWorkspace(_data.current_workspace);
+    // load the profile, workspace and status bar
+    await loadProfile(_data.current_profile_path); 
+    await loadWorkspace(_data.current_workspace_path);
     
     await constructStatusBar();
 
     _api.subscribeToClose(end)
 }
-
+// handle the first time
 async function handleFirstTime() {
     await _api.mkdir('profiles')
     await _api.mkdir('workspaces')
@@ -118,7 +143,7 @@ async function handleFirstTime() {
     await _api.write('profiles/main-profile.json', JSON.stringify(profile));
     await _api.write('workspaces/main-workspace.json', JSON.stringify(workspace));
 }
-
+// Adjust the grid by increments
 async function adjustGrid(inc_w, inc_h) {
     for (let i = 0; i < inc_w; i++) {
         const arr = [];
@@ -136,7 +161,7 @@ async function adjustGrid(inc_w, inc_h) {
     container.style.gridTemplateColumns = `repeat(${_vars.grid_width}, 1fr)`;
     container.style.gridTemplateRows = `repeat(${_vars.grid_height}, 1fr)`;
 }
-
+// creates a widget (in-progress)
 async function newWidget(id, name, x, y, height=1, width=1) {
     if (tryTo(() => getWidgetFromKnown(id)) == null) throw new Error("Widget ID not known.");
     if (id == null || name == null || x == null || y == null) throw new Error("At least one required parameter is null.");
@@ -166,7 +191,7 @@ async function newWidget(id, name, x, y, height=1, width=1) {
 
     loadWidget(widget);
 }
-
+// loads a widget (in-progress)
 async function loadWidget(widget) {
     const widgetDiv = document.createElement('div');
     widgetDiv.id = `widget-${widget.n}-container`
@@ -195,5 +220,6 @@ async function loadWidget(widget) {
 }
 
 async function end() {
-    
+    // function that needs to be run on close
+    // this needs to save workspace data to file, then give the "go ahead" to main
 }
