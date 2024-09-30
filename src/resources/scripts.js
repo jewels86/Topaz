@@ -56,6 +56,8 @@ async function loadWorkspace(path) {
     window._data.current_workspace = workspace; // set the variable
     _vars.current_workspace_name = workspace.name; // give them the name
     _vars.current_workspace_theme = workspace.theme; // give them the theme
+
+    _data.current_workspace.widgets.forEach(w => loadWidget(w));
 }
 /**
  * Builds the bottom status bar.
@@ -70,7 +72,7 @@ async function constructStatusBar() {
         if (s.tooltip != null) x.title = interpret(x.tooltip);
     }
 
-    [..._data.current_profile.statusbar, ..._vars.current_workspace.statusbar].forEach((stat) => { // for all the status bar items
+    [..._data.current_profile.statusbar, ..._data.current_workspace.statusbar].forEach((stat) => { // for all the status bar items
         if (stat.interaction != null) { // if its interactable
             if (stat.interaction_type == "button") { // if it should be a button
                 const btn = document.createElement('button');
@@ -187,7 +189,7 @@ async function newWidget(id, name, x, y, height=1, width=1) {
     wdata.data.forEach(v => widget.data[v.id] = v.initial_value);
     wdata.settings.forEach(v => widget.settings[v.id] = v.initial_value);
 
-    _data.current_workspace_obj.widgets.push(widget);
+    _data.current_workspace.widgets.push(widget);
 
     loadWidget(widget);
 }
@@ -222,4 +224,11 @@ async function loadWidget(widget) {
 async function end() {
     // function that needs to be run on close
     // this needs to save workspace data to file, then give the "go ahead" to main
+    await _api.write(_data.current_workspace_path, JSON.stringify(_data.current_workspace));
+    await _api.write(_data.current_profile_path, JSON.stringify(_data.current_profile));
+    _data.mainfile.latest_profile = _data.mainfile.profiles.findIndex(v => v === _data.current_profile_path);
+    _data.mainfile.latest_workspace = _data.mainfile.workspaces.findIndex(v => v === _data.current_workspace_path);
+    await _api.write("main.json", JSON.stringify(_data.mainfile));
+
+    _api.close();
 }

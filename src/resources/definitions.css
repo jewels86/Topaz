@@ -43,6 +43,9 @@
 .horizontal-flex-right {
     justify-items: right;
 }
+.horizontal-flex {
+    justify-items: center;
+}
 .vertical-flex {
     display: flex;
     flex-direction: column;
@@ -70,6 +73,9 @@
     flex-grow: 1;
 }
 
+.no-border {
+    border: none;
+}
 .no-extra {
     padding: 0;
     margin: 0;

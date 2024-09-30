@@ -28,7 +28,12 @@ app.whenReady().then(() => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow()
     })
 
-    app.on('before-quit', () => ipcMain.emit('closing', []))
+    win.on('close', (ev) => {
+        ev.preventDefault()
+        win.webContents.send('close?')
+    })
+
+    ipcMain.on('close', (ev) => win.destroy());
 })
 
 app.on('window-all-closed', () => {
