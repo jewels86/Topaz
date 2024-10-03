@@ -168,9 +168,6 @@ async function newWidget(id, name, x, y, height=1, width=1) {
     if (tryTo(() => getWidgetFromKnown(id)) == null) throw new Error("Widget ID not known.");
     if (id == null || name == null || x == null || y == null) throw new Error("At least one required parameter is null.");
 
-    if ((x + (width - 1)) >= _vars.grid_width) adjustGrid((x + (width - 1)) - (_vars.grid_width - 1), 0);
-    if ((y + (height - 1)) >= _vars.grid_height) adjustGrid(0, (y + (height - 1)) - (_vars.grid_height - 1));
-
     const wdata = JSON.parse(await _api.read(getWidgetFromKnown(id).path));
     
     const widget = {
@@ -195,6 +192,12 @@ async function newWidget(id, name, x, y, height=1, width=1) {
 }
 // loads a widget (in-progress)
 async function loadWidget(widget) {
+    if ((widget.x + (widget.width - 1)) >= _vars.grid_width) 
+        adjustGrid((widget.x + (widget.width - 1)) - (_vars.grid_width - 1), 0);
+
+    if ((widget.y + (widget.height - 1)) >= _vars.grid_height) 
+        adjustGrid(0, (widget.y + (widget.height - 1)) - (_vars.grid_height - 1));
+
     const widgetDiv = document.createElement('div');
     widgetDiv.id = `widget-${widget.n}-container`
     widgetDiv.style.gridColumn = `${widget.x} / ${(widget.width - 1) + widget.x}`;
@@ -232,3 +235,5 @@ async function end() {
 
     _api.close();
 }
+
+// notes: add loadTemplates, fix positioning so 0, 0 works or so that it uses 1, 1; add new widget button

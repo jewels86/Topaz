@@ -30,6 +30,7 @@ app.whenReady().then(() => {
 
     win.on('close', (ev) => {
         ev.preventDefault()
+        win.hide()
         win.webContents.send('close?')
     })
 
