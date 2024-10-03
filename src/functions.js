@@ -1,4 +1,3 @@
-const keytar = require('keytar')
 const fs = require('node:fs')
 
 async function write(path, x) {
@@ -29,10 +28,10 @@ function mkdir(path) {
 }
 
 function getSecureData(id) {
-
+    const keytar = require('keytar')
 }
 function setSecureData(id, value) {
-
+    const keytar = require('keytar')
 }
 
 module.exports = {
