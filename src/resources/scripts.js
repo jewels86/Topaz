@@ -72,6 +72,8 @@ async function constructStatusBar() {
         if (s.tooltip != null) x.title = interpret(x.tooltip);
     }
 
+    footer.innerHTML = "";
+
     [..._data.current_profile.statusbar, ..._data.current_workspace.statusbar].forEach((stat) => { // for all the status bar items
         if (stat.interaction != null) { // if its interactable
             if (stat.interaction_type == "button") { // if it should be a button
@@ -111,6 +113,7 @@ async function startup() {
     window._data = {}; // private data for the app itself (not accessible to widgets or status bar items)
     window._vars.grid = []; // grid that holds placeholders (numbers that represent widgets)
     window._data.grid_ref = {}; // number representation -> actual widget
+    window._data.templates = JSON.parse(await _api.read("data/templates.json"));
     window._vars.grid_height = 0; // height of the grid
     window._vars.grid_width = 0; // width of the grid
     window._vars.next_n = 0; // widget numbers count
@@ -118,6 +121,8 @@ async function startup() {
     window._data.mainfile = JSON.parse(await window._api.read('main.json')); // read the mainfile (it holds all the paths for profiles and workspaces)
     window._data.current_profile_path = _data.mainfile.profiles[_data.mainfile.latest_profile]; // set the profile to the latest one
     window._data.current_workspace_path = _data.mainfile.workspaces[_data.mainfile.latest_profile]; // set the workspace to the latest one
+
+    adjustGrid(1, 1);
 
     // load the profile, workspace and status bar
     await loadProfile(_data.current_profile_path); 
@@ -132,7 +137,7 @@ async function handleFirstTime() {
     await _api.mkdir('profiles')
     await _api.mkdir('workspaces')
 
-    const template = JSON.parse(await _api.read("data/template.json"));
+    const template = JSON.parse(await _api.read("data/templates.json"));
 
     const mainfile = template.mainfile;
     const profile = template.profile;
@@ -147,6 +152,7 @@ async function handleFirstTime() {
 }
 // Adjust the grid by increments
 async function adjustGrid(inc_w, inc_h) {
+    console.log(`adjustGrid called with ${inc_w}, ${inc_h}`);
     for (let i = 0; i < inc_w; i++) {
         const arr = [];
         arr.fill(-1, 0, _vars.grid_height);
@@ -179,29 +185,38 @@ async function newWidget(id, name, x, y, height=1, width=1) {
         width: width,
         data: {},
         settings: {},
-        n: _vars.next_n
+        n: -1
     }
-    _vars.next_n += 1;
 
     wdata.data.forEach(v => widget.data[v.id] = v.initial_value);
     wdata.settings.forEach(v => widget.settings[v.id] = v.initial_value);
-
-    _data.current_workspace.widgets.push(widget);
 
     loadWidget(widget);
 }
 // loads a widget (in-progress)
 async function loadWidget(widget) {
-    if ((widget.x + (widget.width - 1)) >= _vars.grid_width) 
-        adjustGrid((widget.x + (widget.width - 1)) - (_vars.grid_width - 1), 0);
+    console.log({
+        _x: widget.x + 1,
+        _y: widget.y + 1,
+        w: widget,
+        gw: _vars.grid_width,
+        gh: _vars.grid_height,
+        x_needs_inc: ((widget.x + 1) + (widget.width - 1)) > _vars.grid_width,
+        y_needs_inc: ((widget.y + 1) + (widget.height - 1)) > _vars.grid_height,
+        xinc: ((widget.x + 1) + (widget.width - 1)) - (_vars.grid_width),
+        yinc: ((widget.y + 1) + (widget.height - 1)) - (_vars.grid_height)
+    });
 
-    if ((widget.y + (widget.height - 1)) >= _vars.grid_height) 
-        adjustGrid(0, (widget.y + (widget.height - 1)) - (_vars.grid_height - 1));
+    if (((widget.x + 1) + (widget.width - 1)) > _vars.grid_width) 
+        adjustGrid(((widget.x + 1) + (widget.width - 1)) - (_vars.grid_width), 0);
+
+    if (((widget.y + 1) + (widget.height - 1)) > _vars.grid_height) 
+        adjustGrid(0, ((widget.y + 1) + (widget.height - 1)) - (_vars.grid_height));
 
     const widgetDiv = document.createElement('div');
     widgetDiv.id = `widget-${widget.n}-container`
-    widgetDiv.style.gridColumn = `${widget.x} / ${(widget.width - 1) + widget.x}`;
-    widgetDiv.style.gridRow = `${widget.y} / ${(widget.height - 1) + widget.y}`;
+    widgetDiv.style.gridColumn = `${widget.x + 1} / ${(widget.width - 1) + widget.x + 1}`;
+    widgetDiv.style.gridRow = `${widget.y + 1} / ${(widget.height - 1) + widget.y + 1}`;
     widgetDiv.classList.add("vertical-flex");
     
     const frame = document.createElement('iframe');
@@ -222,6 +237,11 @@ async function loadWidget(widget) {
     widgetDiv.appendChild(frame);
 
     document.getElementById('container').appendChild(widgetDiv);
+
+    widget.n = _vars.next_n;
+    _vars.next_n += 1;
+    _vars.grid[widget.x][widget.y] = widget.n;
+    _data.current_workspace.widgets.push(widget);
 }
 
 async function end() {
@@ -236,4 +256,4 @@ async function end() {
     _api.close();
 }
 
-// notes: add loadTemplates, fix positioning so 0, 0 works or so that it uses 1, 1; add new widget button
+// notes: fix positioning so 0, 0 works or so that it uses 1, 1; add new widget button
