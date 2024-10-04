@@ -4,6 +4,7 @@ const tryTo = (x) => {
     try { return x(); }
     catch { return null; }
 } // function to execute a function inside a try/catch block (just to save time and space)
+const evaluate = (x) => _fns[interpret(x).split("(")[0]](x.replace(")").split("(")[1].split(","));
 
 /** 
  * Sets the current theme.
@@ -76,7 +77,7 @@ async function constructStatusBar() {
 
     [..._data.current_profile.statusbar, ..._data.current_workspace.statusbar].forEach((stat) => { // for all the status bar items
         if (stat.interaction != null) { // if its interactable
-            if (stat.interaction_type == "button") { // if it should be a button
+            if (stat.interaction == "button") { // if it should be a button
                 const btn = document.createElement('button');
                 btn.classList.add("stat-btn");
                 
@@ -84,7 +85,7 @@ async function constructStatusBar() {
                 setTooltip(stat, btn);
 
                 btn.onclick = (ev) => {
-
+                    evaluate(stat.action);
                 }
 
                 footer.appendChild(btn);
@@ -108,7 +109,11 @@ async function constructStatusBar() {
 async function startup() {
     if (!(await _api.exists('main.json'))) await handleFirstTime(); // handle the first time if it is the first time
 
-    window._fns = {}; // functions accessible to widgets or status bar items
+    window._fns = {
+        openSettings: openSettings,
+        setPassword: null,
+        getPassword: null
+    }; // functions accessible to widgets or status bar items
     window._vars = {}; // variables accessible to widgets or status bar items
     window._data = {}; // private data for the app itself (not accessible to widgets or status bar items)
     window._vars.grid = []; // grid that holds placeholders (numbers that represent widgets)
@@ -130,7 +135,7 @@ async function startup() {
     
     await constructStatusBar();
 
-    _api.subscribeToClose(end)
+    _api.subscribeToClose(end);
 }
 // handle the first time
 async function handleFirstTime() {
@@ -185,7 +190,8 @@ async function newWidget(id, name, x, y, height=1, width=1) {
         width: width,
         data: {},
         settings: {},
-        n: -1
+        n: -1,
+        auths: []
     }
 
     wdata.data.forEach(v => widget.data[v.id] = v.initial_value);
@@ -211,7 +217,8 @@ async function loadWidget(widget) {
     frame.id = `widget-${widget.n}`;
     frame.src = JSON.parse(await _api.read(getWidgetFromKnown(widget.id).path)).path;
     frame.sandbox = "allow-scripts";
-    frame.onload = () => frame.contentWindow.postMessage({ vars: _vars, fns: _fns });
+    frame.onload = () => frame.contentWindow.postMessage({ vars: _vars, fns: _fns.keys() });
+    frame.addEventListener('message', (ev) => evaluate(ev.data));
     frame.classList.add("grow", "border-secondary");
 
     const topbar = document.createElement('div');
@@ -244,4 +251,50 @@ async function end() {
     _api.close();
 }
 
-// notes: fix positioning so 0, 0 works or so that it uses 1, 1; add new widget button
+async function openSettings() {
+    const overlay = document.getElementById("settings-overlay");
+    const sidebar = document.getElementById("settings-sidebar");
+    const content = document.getElementById("settings-content");
+    const _settings = JSON.parse(await _api.read("data/settings.json")).settings;
+
+    overlay.style.visibility = "visible";
+
+    const tabSwitched = new CustomEvent("settings-tab-switched");
+    let currentTabIndex = 0;
+
+    _settings.forEach((v, i) => {
+        const button = document.createElement('button');
+        button.className = "stat-btn";
+        button.innerText = v.name;
+        button.onclick = () => { currentTabIndex = i; overlay.dispatchEvent(tabSwitched); };
+        sidebar.appendChild(button);
+    });
+
+    overlay.addEventListener('settings-tab-switched', () => {
+        content.innerHTML = "";
+        _settings[currentTabIndex].settings.forEach(v => {
+            if (v._type == "setting") {
+                const div = document.createElement('div');
+                div.classList.add("horizontal-flex-left", "space-between", "width-full");
+
+                const nameText = document.createElement('p');
+                nameText.innerText = v.name;
+
+                let element;
+
+                if (v.type == "text") {
+                    element = document.createElement('input');
+                    element.type = "text";
+                }
+
+                element.style.width = "60%";
+                v.value = interpret(v.default);
+                element.onclick = () => evaluate(v.action.replace("<x>", v.value));
+
+                div.appendChild(nameText);
+                div.appendChild(element);
+            }
+        })
+    });
+    overlay.dispatchEvent(tabSwitched);
+}

@@ -21,10 +21,11 @@ html {
 }
 
 
-footer p {
+footer p, footer .stat-btn {
     padding: 3px 6px 3px 6px;
     margin: 0;
     font-size: 12px;
+    color: var(--text);
     /*width: fit-content;*/
 }
 
@@ -38,4 +39,37 @@ footer p {
 
 #container {
     margin-bottom: 20px;
+}
+
+#widget-overlay, #settings-overlay {
+    position: absolute;
+    z-index: 2;
+    bottom: 12.5%;
+    left: 12.5%;
+    background-color:var(--secondary);
+    display: flex;
+    width: 75%;
+    height: 75%;
+    color: var(--text);
+    visibility: hidden;
+}
+
+#widget-overlay {
+    flex-direction: column;
+}
+#settings-overlay {
+    flex-direction: row;
+}
+#settings-overlay #settings-sidebar {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    height: 100%;
+    border: 1px solid var(--primary);
+}
+#settings-overlay #settings-sidebar .stat-btn {
+    padding: 10px 60px;
+}
+#settings-overlay #settings-content {
+    flex-grow: 1;
 }

@@ -1,0 +1,16 @@
+{
+    "settings": [
+        {
+            "name": "Workspace",
+            "settings": [
+                {
+                    "_type": "setting",
+                    "name": "Workspace Name",
+                    "type": "text",
+                    "default": "[current_workspace_name]",
+                    "action": "setWorkspaceName(<x>)"
+                }
+            ]
+        }
+    ]
+}
