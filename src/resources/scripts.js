@@ -193,20 +193,8 @@ async function newWidget(id, name, x, y, height=1, width=1) {
 
     loadWidget(widget);
 }
-// loads a widget (in-progress)
+// loads a widget
 async function loadWidget(widget) {
-    console.log({
-        _x: widget.x + 1,
-        _y: widget.y + 1,
-        w: widget,
-        gw: _vars.grid_width,
-        gh: _vars.grid_height,
-        x_needs_inc: ((widget.x + 1) + (widget.width - 1)) > _vars.grid_width,
-        y_needs_inc: ((widget.y + 1) + (widget.height - 1)) > _vars.grid_height,
-        xinc: ((widget.x + 1) + (widget.width - 1)) - (_vars.grid_width),
-        yinc: ((widget.y + 1) + (widget.height - 1)) - (_vars.grid_height)
-    });
-
     if (((widget.x + 1) + (widget.width - 1)) > _vars.grid_width) 
         adjustGrid(((widget.x + 1) + (widget.width - 1)) - (_vars.grid_width), 0);
 
