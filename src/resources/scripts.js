@@ -109,11 +109,6 @@ async function constructStatusBar() {
 async function startup() {
     if (!(await _api.exists('main.json'))) await handleFirstTime(); // handle the first time if it is the first time
 
-    window._fns = {
-        openSettings: openSettings,
-        setPassword: null,
-        getPassword: null
-    }; // functions accessible to widgets or status bar items
     window._vars = {}; // variables accessible to widgets or status bar items
     window._data = {}; // private data for the app itself (not accessible to widgets or status bar items)
     window._vars.grid = []; // grid that holds placeholders (numbers that represent widgets)
@@ -122,6 +117,11 @@ async function startup() {
     window._vars.grid_height = 0; // height of the grid
     window._vars.grid_width = 0; // width of the grid
     window._vars.next_n = 0; // widget numbers count
+    window._fns = {
+        openSettings: _api.openSettings,
+        setPassword: null,
+        getPassword: null
+    }; // functions accessible to widgets or status bar items
 
     window._data.mainfile = JSON.parse(await window._api.read('main.json')); // read the mainfile (it holds all the paths for profiles and workspaces)
     window._data.current_profile_path = _data.mainfile.profiles[_data.mainfile.latest_profile]; // set the profile to the latest one
@@ -249,52 +249,4 @@ async function end() {
     await _api.write("main.json", JSON.stringify(_data.mainfile));
 
     _api.close();
-}
-
-async function openSettings() {
-    const overlay = document.getElementById("settings-overlay");
-    const sidebar = document.getElementById("settings-sidebar");
-    const content = document.getElementById("settings-content");
-    const _settings = JSON.parse(await _api.read("data/settings.json")).settings;
-
-    overlay.style.visibility = "visible";
-
-    const tabSwitched = new CustomEvent("settings-tab-switched");
-    let currentTabIndex = 0;
-
-    _settings.forEach((v, i) => {
-        const button = document.createElement('button');
-        button.className = "stat-btn";
-        button.innerText = v.name;
-        button.onclick = () => { currentTabIndex = i; overlay.dispatchEvent(tabSwitched); };
-        sidebar.appendChild(button);
-    });
-
-    overlay.addEventListener('settings-tab-switched', () => {
-        content.innerHTML = "";
-        _settings[currentTabIndex].settings.forEach(v => {
-            if (v._type == "setting") {
-                const div = document.createElement('div');
-                div.classList.add("horizontal-flex-left", "space-between", "width-full");
-
-                const nameText = document.createElement('p');
-                nameText.innerText = v.name;
-
-                let element;
-
-                if (v.type == "text") {
-                    element = document.createElement('input');
-                    element.type = "text";
-                }
-
-                element.style.width = "60%";
-                v.value = interpret(v.default);
-                element.onclick = () => evaluate(v.action.replace("<x>", v.value));
-
-                div.appendChild(nameText);
-                div.appendChild(element);
-            }
-        })
-    });
-    overlay.dispatchEvent(tabSwitched);
 }

@@ -8,6 +8,7 @@ contextBridge.exposeInMainWorld('_api', { // sets up ipc
     getSecureData:  async (id)          => await ipcRenderer.invoke('getSD', [id]),
     setSecureData:  async (id, value)   => await ipcRenderer.invoke('setSD', [id, value]),
 
-    subscribeToClose:  (x)               => ipcRenderer.on('close?', x),
-    close: ()                           => ipcRenderer.send('close', [])
+    subscribeToClose:  (x)              => ipcRenderer.on('close?', x),
+    close: ()                           => ipcRenderer.send('close', []),
+    openSettings: ()                    => ipcRenderer.send('open-settings', [])
 })

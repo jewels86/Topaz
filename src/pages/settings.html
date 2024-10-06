@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="../resources/main.css">
+        <link rel="stylesheet" href="../resources/definitions.css">
+        <link rel="stylesheet" href="../resources/settings.css">
+
+        <script src="../resources/scripts.js"></script>
+    </head>
+    <body class="horizontal-flex-left">
+        <div style="width: 20%;" class="back-secondary vertical-flex sidebar">
+            <button class="stat-btn">Workspace</button>
+            <button class="stat-btn">Profile</button>
+        </div>
+        <div class="grow">
+
+        </div>
+    </body>
+    <script defer>
+        async function start() {
+            const mainfile = JSON.parse((await window._api.read("main.json")));
+            const profile = JSON.parse((await window._api.read(mainfile.profiles[0])));
+            setTheme(profile.theme);
+        }
+        start();
+    </script>
+</html>

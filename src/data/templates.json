@@ -12,13 +12,15 @@
             {
                 "label": "[current_profile_name]",
                 "tooltip": null,
-                "interaction": null
+                "interaction": null,
+                "position": 0
             },
             {
                 "label": "Open Settings",
                 "tooltip": null,
                 "interaction": "button",
-                "action": "openSettings()"
+                "action": "openSettings()",
+                "position": 2
             }
         ],
         "known_widgets": [
@@ -34,7 +36,8 @@
             {
                 "label": "[current_workspace_name]",
                 "tooltip": null,
-                "interaction": null
+                "interaction": null,
+                "position": 1
             }
         ],
         "widgets": [

@@ -21,6 +21,8 @@ app.whenReady().then(() => {
 
     ipcMain.handle('show', (ev, args) => win.show())
 
+    ipcMain.on('open-settings', () => openSettings())
+
     win.loadFile('pages/index.html')
     win.once('ready-to-show', () => { win.show(); win.maximize(); win.focus() })
 
@@ -40,3 +42,26 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit()
 })
+
+function openSettings() {
+    const settingsWindow = new BrowserWindow({
+        width: 600,
+        height: 600,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js')
+        },
+        maximizable: false,
+        minimizable: false,
+        resizable: false,
+        alwaysOnTop: true
+    })
+    settingsWindow.loadFile("pages/settings.html")
+
+    settingsWindow.on('close', (ev) => {
+        ev.preventDefault()
+        settingsWindow.hide()
+        settingsWindow.webContents.send("close-settings?");
+    })
+    ipcMain.on('close-settings', () => settingsWindow.destroy())
+    ipcMain.emit('settings-changed')
+}
