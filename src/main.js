@@ -22,6 +22,7 @@ app.whenReady().then(() => {
     ipcMain.handle('show', (ev, args) => win.show())
 
     ipcMain.on('open-settings', () => openSettings())
+    ipcMain.on('new-widget', () => {})
 
     win.loadFile('pages/index.html')
     win.once('ready-to-show', () => { win.show(); win.maximize(); win.focus() })
@@ -60,8 +61,31 @@ function openSettings() {
     settingsWindow.on('close', (ev) => {
         ev.preventDefault()
         settingsWindow.hide()
-        settingsWindow.webContents.send("close-settings?");
+        settingsWindow.webContents.send("close-settings?")
     })
     ipcMain.on('close-settings', () => settingsWindow.destroy())
     ipcMain.emit('settings-changed')
+}
+
+function newWidget() {
+    const widgetWindow = new BrowserWindow({
+        width: 600,
+        height: 600,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js')
+        },
+        maximizable: false,
+        minimizable: false,
+        resizable: false,
+        alwaysOnTop: true
+    })
+    widgetWindow.loadFile("pages/new.html")
+
+    widgetWindow.on('close', (ev) => {
+        ev.preventDefault()
+        widgetWindow.hide()
+        widgetWindow.webContents.send("close-widget?");
+    })
+    ipcMain.on('close-widget', () => widgetWindow.destroy())
+    ipcMain.emit('added-widget')
 }
