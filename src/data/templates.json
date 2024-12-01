@@ -12,15 +12,19 @@
             {
                 "label": "[current_profile_name]",
                 "tooltip": null,
-                "interaction": null,
-                "position": 0
+                "interaction": null
             },
             {
                 "label": "Open Settings",
                 "tooltip": null,
                 "interaction": "button",
-                "action": "openSettings()",
-                "position": 2
+                "action": "openSettings()"
+            },
+            {
+                "label": "New Widget",
+                "tooltip": null,
+                "interaction": "button",
+                "action": "newWidget()"
             }
         ],
         "known_widgets": [

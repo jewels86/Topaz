@@ -64,7 +64,8 @@ async function loadWorkspace(path) {
  * Builds the bottom status bar.
  */
 async function constructStatusBar() {
-    const footer = document.getElementById('footer'); // get the bar's HTML
+    const footerLeft = document.getElementById('footer-left'); // get the left footer's HTML
+    const footerRight = document.getElementById('footer-right'); // get the right footer's HTML
 
     const setInnerText = (s, x) => { // shorthand to set text
         x.innerText = interpret(s.label);
@@ -73,9 +74,12 @@ async function constructStatusBar() {
         if (s.tooltip != null) x.title = interpret(x.tooltip);
     }
 
-    footer.innerHTML = "";
+    footerLeft.innerHTML = "";
+    footerRight.innerHTML = "";
 
-    [..._data.current_profile.statusbar, ..._data.current_workspace.statusbar].forEach((stat) => { // for all the status bar items
+    _data.current_workspace.statusbar.forEach((stat) => { // for all the status bar items
+        let element;
+
         if (stat.interaction != null) { // if its interactable
             if (stat.interaction == "button") { // if it should be a button
                 const btn = document.createElement('button');
@@ -88,7 +92,8 @@ async function constructStatusBar() {
                     evaluate(stat.action);
                 }
 
-                footer.appendChild(btn);
+                footerLeft.appendChild(btn);
+                element = btn;
             }
         }
         else { // if its just text
@@ -97,9 +102,45 @@ async function constructStatusBar() {
             setInnerText(stat, p);
             setTooltip(stat, p);
 
-            footer.appendChild(p);
+            footerLeft.appendChild(p);
+            element = p;
         }
         // TODO: Finish this
+
+        element.classList.add("justify-left");
+    })
+
+    _data.current_profile.statusbar.forEach((stat) => { // for all the status bar items
+        let element;
+
+        if (stat.interaction != null) { // if its interactable
+            if (stat.interaction == "button") { // if it should be a button
+                const btn = document.createElement('button');
+                btn.classList.add("stat-btn");
+                
+                setInnerText(stat, btn);
+                setTooltip(stat, btn);
+
+                btn.onclick = (ev) => {
+                    evaluate(stat.action);
+                }
+
+                footerRight.appendChild(btn);
+                element = btn;
+            }
+        }
+        else { // if its just text
+            const p = document.createElement('p');
+
+            setInnerText(stat, p);
+            setTooltip(stat, p);
+
+            footerRight.appendChild(p);
+            element = p;
+        }
+        // TODO: Finish this
+
+        element.classList.add("justify-left");
     })
 }
 

@@ -4,7 +4,9 @@
   "description": "A customizable, virtual workspace.",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "clean": "rm profiles && rm workspaces && rm main.json",
+    "clean-win": "powershell -Command \"Remove-Item -Recurse -Force profiles, workspaces, main.json\""
   },
   "author": "Gold Team",
   "license": "SEE LICENSE IN LICENSE.md",
