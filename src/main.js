@@ -53,7 +53,6 @@ function openSettings() {
         },
         maximizable: false,
         minimizable: false,
-        resizable: false,
         alwaysOnTop: true
     })
     settingsWindow.loadFile("pages/settings.html")
@@ -62,6 +61,7 @@ function openSettings() {
         ev.preventDefault()
         settingsWindow.hide()
         settingsWindow.webContents.send("close-settings?")
+        settingsWindow.destroy()
     })
     ipcMain.on('close-settings', () => settingsWindow.destroy())
     ipcMain.emit('settings-changed')

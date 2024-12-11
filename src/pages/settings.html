@@ -1,27 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html class="width-full overflow-hidden">
     <head>
         <link rel="stylesheet" href="../resources/main.css">
         <link rel="stylesheet" href="../resources/definitions.css">
         <link rel="stylesheet" href="../resources/settings.css">
 
         <script src="../resources/scripts.js"></script>
+        <script src="../resources/settings.js"></script>
     </head>
-    <body class="horizontal-flex-left">
-        <div style="width: 20%;" class="back-secondary vertical-flex sidebar">
-            <button class="stat-btn">Workspace</button>
-            <button class="stat-btn">Profile</button>
+    <body class="horizontal-flex-left no-extra">
+        <div style="width: 30vw;" class="back-secondary vertical-flex">
+            <button class="bare-btn pad" onclick="openPage('workspace')">Workspace</button>
+            <button class="bare-btn pad" onclick="openPage('profile')">Profile</button>
         </div>
-        <div class="grow">
-
+        <div class="grow" style="width: 69vw;">
+            <div id="workspace" class="section vertical-flex">
+                <h1>Workspace</h1>
+                <div class="setting">
+                    <p>Workspace Name</p>
+                    <input type="text" id="workspace-name" value="">
+                </div>
+                <div class="setting">
+                    <p>Workspace Theme</p>
+                    <input type="text" id="workspace-theme" value="">
+                </div>
+            </div>
+            <div id="profile" class="section vertical-flex">
+                <h1>Profile</h1>
+                <div class="setting">
+                    <p>Profile Name</p>
+                    <input type="text" id="profile-name" value="">
+                </div>
+                <div class="setting">
+                    <p>Profile Theme</p>
+                    <input type="text" id="profile-theme" value="">
+                </div>
+            </div>
         </div>
     </body>
-    <script defer>
-        async function start() {
-            const mainfile = JSON.parse((await window._api.read("main.json")));
-            const profile = JSON.parse((await window._api.read(mainfile.profiles[0])));
-            setTheme(profile.theme);
-        }
-        start();
+    <script>
+        startSettings();
     </script>
 </html>
