@@ -2,7 +2,8 @@ let page;
 
 async function startSettings() {
     window.mainfile = JSON.parse((await window._api.read("main.json")));
-    window.profile = JSON.parse((await window._api.read(mainfile.profiles[0])));
+    window.profile = JSON.parse((await window._api.read(mainfile.profiles[mainfile.latest_profile])));
+    window.workspace = JSON.parse((await window._api.read(mainfile.workspace[mainfile.latest_workspace])));
     window._vars = {};
     setTheme(profile.theme);
 
@@ -22,8 +23,8 @@ function openPage(pageName) {
 
 function loadWorkspaceSettings() {
     const setting = x => document.getElementById(x);
-    setting("workspace-name").value = profile.name;
-    setting("workspace-theme").value = profile.theme;
+    setting("workspace-name").value = workspace.name;
+    setting("workspace-theme").value = workspace.theme;
 }
 
 function loadProfileSettings() {
@@ -38,4 +39,7 @@ function saveWorkspaceSettings() {
     profile.theme = setting("profile-theme").value;
     workspace.name = setting("workspace-name").value;
     workspace.theme = setting("workspace-theme").value;
+    window._api.write("main.json", JSON.stringify(window.mainfile));
+    window._api.write(mainfile.profiles[mainfile.latest_profile], JSON.stringify(window.profile));
+    window._api.write(mainfile.workspace[mainfile.latest_workspace], JSON.stringify(window.workspace));
 }

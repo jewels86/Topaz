@@ -1,6 +1,3 @@
-# Azotic Topaz 
-## Features
-- Tons of widgets to choose from
-- Multiple themes
-- Shared Workspaces
-- Custom Widgets
+# Azotic Topaz
+## Todos
+- Switch latest profile to default or something
