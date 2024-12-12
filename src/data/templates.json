@@ -2,7 +2,7 @@
     "mainfile": {
         "profiles": ["profiles/main-profile.json"],
         "workspaces": ["workspaces/main-workspace.json"],
-        "latest_profile": 0,
+        "default_profile": 0,
         "latest_workspace": 0
     },
     "profile": {
@@ -36,6 +36,7 @@
         "name": "Workspace",
         "theme": "data/themes/dark.json",
         "theme_dominance": false,
+        "profile": "",
         "statusbar": [
             {
                 "label": "[current_workspace_name]",

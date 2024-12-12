@@ -165,14 +165,15 @@ async function startup() {
     }; // functions accessible to widgets or status bar items
 
     window._data.mainfile = JSON.parse(await window._api.read('main.json')); // read the mainfile (it holds all the paths for profiles and workspaces)
-    window._data.current_profile_path = _data.mainfile.profiles[_data.mainfile.latest_profile]; // set the profile to the latest one
-    window._data.current_workspace_path = _data.mainfile.workspaces[_data.mainfile.latest_profile]; // set the workspace to the latest one
+    window._data.current_workspace_path = _data.mainfile.workspaces[_data.mainfile.latest_workspace]; // set the workspace to the latest one
 
     adjustGrid(1, 1);
 
     // load the profile, workspace and status bar
-    await loadProfile(_data.current_profile_path); 
     await loadWorkspace(_data.current_workspace_path);
+
+    _data.current_profile_path = _data.current_workspace.profile != "" ? _data.current_workspace.profile : _data.mainfile.profiles[_data.mainfile.default_profile];
+    await loadProfile(_data.current_profile_path); 
     
     await constructStatusBar();
 

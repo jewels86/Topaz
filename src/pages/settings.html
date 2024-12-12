@@ -12,6 +12,7 @@
         <div style="width: 30vw;" class="back-secondary vertical-flex">
             <button class="bare-btn pad" onclick="openPage('workspace')">Workspace</button>
             <button class="bare-btn pad" onclick="openPage('profile')">Profile</button>
+            <button class="bare-btn pad" onclick="openPage('mainfile')">Mainfile</button>
         </div>
         <div class="grow" style="width: 69vw;">
             <div id="workspace" class="section vertical-flex">
@@ -24,6 +25,10 @@
                     <p>Workspace Theme</p>
                     <input type="text" id="workspace-theme" value="">
                 </div>
+                <div class="setting">
+                    <p>Workspace Profile</p>
+                    <input type="text" id="workspace-profile" value="">
+                </div>
             </div>
             <div id="profile" class="section vertical-flex">
                 <h1>Profile</h1>
@@ -35,6 +40,15 @@
                     <p>Profile Theme</p>
                     <input type="text" id="profile-theme" value="">
                 </div>
+            </div>
+            <div id="mainfile" class="section vertical-flex">
+                <h1>Mainfile</h1>
+                <h2>Profiles</h2>
+                <div class="setting">
+                    <p>Default Profile</p>
+                    <input type="text" id="mainfile-default-profile" value="">
+                </div>
+                <h2>Workspaces</h2>
             </div>
         </div>
     </body>
