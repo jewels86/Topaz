@@ -1,9 +1,12 @@
 const { app, BrowserWindow, ipcMain, Menu } = require("electron")
 const path = require('node:path')
 const fn = require('./functions.js')
+let win;
+let settingsWindow;
+let widgetWindow;
 
 app.whenReady().then(() => {
-    const win = new BrowserWindow({
+    win = new BrowserWindow({
         width: 800,
         height: 600,
         show: false,
@@ -34,6 +37,8 @@ app.whenReady().then(() => {
     win.on('close', (ev) => {
         ev.preventDefault()
         win.hide()
+        if (settingsWindow) settingsWindow.close()
+        if (widgetWindow) widgetWindow.close()
         win.webContents.send('close?')
     })
 
@@ -45,7 +50,7 @@ app.on('window-all-closed', () => {
 })
 
 function openSettings() {
-    const settingsWindow = new BrowserWindow({
+    settingsWindow = new BrowserWindow({
         width: 600,
         height: 600,
         webPreferences: {
@@ -53,7 +58,8 @@ function openSettings() {
         },
         maximizable: false,
         minimizable: false,
-        alwaysOnTop: true
+        alwaysOnTop: true,
+        parent: win
     })
     settingsWindow.loadFile("pages/settings.html")
 
@@ -68,7 +74,7 @@ function openSettings() {
 }
 
 function newWidget() {
-    const widgetWindow = new BrowserWindow({
+    widgetWindow = new BrowserWindow({
         width: 600,
         height: 600,
         webPreferences: {
