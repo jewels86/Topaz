@@ -160,6 +160,7 @@ async function startup() {
     window._vars.next_n = 0; // widget numbers count
     window._fns = {
         openSettings: _api.openSettings,
+        newWidget: _newWidget,
         setPassword: null,
         getPassword: null
     }; // functions accessible to widgets or status bar items
@@ -291,4 +292,9 @@ async function end() {
     await _api.write("main.json", JSON.stringify(_data.mainfile));
 
     _api.close();
+}
+
+function _newWidget() {
+    _api.subscribeToNewWidget((id, name, x, y, height, width) => newWidget(id, name, x, y, height, width));
+    _api.openNewWidget();
 }

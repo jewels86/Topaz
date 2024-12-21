@@ -25,7 +25,7 @@ app.whenReady().then(() => {
     ipcMain.handle('show', (ev, args) => win.show())
 
     ipcMain.on('open-settings', () => openSettings())
-    ipcMain.on('new-widget', () => {})
+    ipcMain.on('open-new-widget', () => openNewWidget)
 
     win.loadFile('pages/index.html')
     win.once('ready-to-show', () => { win.show(); win.maximize(); win.focus() })
@@ -73,7 +73,7 @@ function openSettings() {
     ipcMain.emit('settings-changed')
 }
 
-function newWidget() {
+function openNewWidget() {
     widgetWindow = new BrowserWindow({
         width: 600,
         height: 600,
@@ -93,5 +93,4 @@ function newWidget() {
         widgetWindow.webContents.send("close-widget?");
     })
     ipcMain.on('close-widget', () => widgetWindow.destroy())
-    ipcMain.emit('added-widget')
 }

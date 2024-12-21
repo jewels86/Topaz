@@ -10,5 +10,9 @@ contextBridge.exposeInMainWorld('_api', { // sets up ipc
 
     subscribeToClose:  (x)              => ipcRenderer.on('close?', x),
     close: ()                           => ipcRenderer.send('close', []),
-    openSettings: ()                    => ipcRenderer.send('open-settings', [])
+    openSettings: ()                    => ipcRenderer.send('open-settings', []),
+    openNewWidget: ()                   => ipcRenderer.send('open-new-widget', []),
+    subscribeToSettingsChanged: (x)     => ipcRenderer.on('settings-changed', x),
+    subscribeToWidgetCreated: (x)       => ipcRenderer.on('widget-created', x),
+    createWidget: (id, n, a, y, h, w)   => ipcRenderer.send('widget-created', [id, n, a, y, h, w]),
 })
