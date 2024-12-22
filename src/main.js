@@ -86,6 +86,7 @@ function openNewWidget() {
         alwaysOnTop: true
     })
     widgetWindow.loadFile("pages/new.html")
+    widgetWindow.show()
 
     widgetWindow.on('close', (ev) => {
         ev.preventDefault()
