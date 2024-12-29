@@ -28,9 +28,9 @@ function loadWorkspaceSettings() {
     setting("workspace-theme").value = workspace.theme;
     setting("workspace-profile").value = workspace.profile;
 
-    setting("workspace-name").addEventListener("input", saveWorkspaceSettings);
-    setting("workspace-theme").addEventListener("input", saveWorkspaceSettings);
-    setting("workspace-profile").addEventListener("input", saveWorkspaceSettings);
+    setting("workspace-name").onchange = save;
+    setting("workspace-theme").onchange = save;
+    setting("workspace-profile").onchange = save;
 }
 
 function loadProfileSettings() {
@@ -38,8 +38,8 @@ function loadProfileSettings() {
     setting("profile-name").value = profile.name;
     setting("profile-theme").value = profile.theme;
 
-    setting("profile-name").addEventListener("input", saveProfileSettings);
-    setting("profile-theme").addEventListener("input", saveProfileSettings);
+    setting("profile-name").onchange = save;
+    setting("profile-theme").onchange = save;
 }
 
 function loadMainfileSettings() {

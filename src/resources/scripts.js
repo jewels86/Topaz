@@ -285,8 +285,8 @@ async function loadWidget(widget) {
 async function end() {
     // function that needs to be run on close
     // this needs to save workspace data to file, then give the "go ahead" to main
-    await _api.write(_data.current_workspace_path, JSON.stringify(_data.current_workspace));
-    await _api.write(_data.current_profile_path, JSON.stringify(_data.current_profile));
+    //await _api.write(_data.current_workspace_path, JSON.stringify(_data.current_workspace));
+    //await _api.write(_data.current_profile_path, JSON.stringify(_data.current_profile));
     _data.mainfile.latest_profile = _data.mainfile.profiles.findIndex(v => v === _data.current_profile_path);
     _data.mainfile.latest_workspace = _data.mainfile.workspaces.findIndex(v => v === _data.current_workspace_path);
     await _api.write("main.json", JSON.stringify(_data.mainfile));
@@ -300,5 +300,16 @@ function _newWidget() {
 }
 
 function openSettings() {
+    _api.subscribeToSettingsChanged(async () => {
+        window._data.mainfile = JSON.parse(await window._api.read('main.json'));
+        window._data.current_workspace_path = _data.mainfile.workspaces[_data.mainfile.latest_workspace];
+    
+        await loadWorkspace(_data.current_workspace_path);
+    
+        _data.current_profile_path = _data.current_workspace.profile != "" ? _data.current_workspace.profile : _data.mainfile.profiles[_data.mainfile.default_profile];
+        await loadProfile(_data.current_profile_path); 
+        
+        await constructStatusBar();
+    })
     _api.openSettings();
 }

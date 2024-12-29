@@ -37,7 +37,9 @@ app.whenReady().then(() => {
     win.on('close', (ev) => {
         ev.preventDefault()
         win.hide()
-        if (settingsWindow != undefined) settingsWindow.close()
+        if (settingsWindow != undefined) { 
+            if (!settingsWindow.isDestroyed()) settingsWindow.close() 
+        }
         if (widgetWindow != undefined) widgetWindow.close()
         win.webContents.send('close?')
     })
