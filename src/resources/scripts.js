@@ -159,7 +159,7 @@ async function startup() {
     window._vars.grid_width = 0; // width of the grid
     window._vars.next_n = 0; // widget numbers count
     window._fns = {
-        openSettings: _api.openSettings,
+        openSettings: openSettings,
         newWidget: _newWidget,
         setPassword: null,
         getPassword: null
@@ -217,7 +217,7 @@ async function adjustGrid(inc_w, inc_h) {
     container.style.gridTemplateColumns = `repeat(${_vars.grid_width}, 1fr)`;
     container.style.gridTemplateRows = `repeat(${_vars.grid_height}, 1fr)`;
 }
-// creates a widget (in-progress)
+// creates a widget
 async function newWidget(id, name, x, y, height=1, width=1) {
     if (tryTo(() => getWidgetFromKnown(id)) == null) throw new Error("Widget ID not known.");
     if (id == null || name == null || x == null || y == null) throw new Error("At least one required parameter is null.");
@@ -297,4 +297,8 @@ async function end() {
 function _newWidget() {
     _api.subscribeToWidgetCreated((id, name, x, y, height, width) => newWidget(id, name, x, y, height, width));
     _api.openNewWidget();
+}
+
+function openSettings() {
+    _api.openSettings();
 }

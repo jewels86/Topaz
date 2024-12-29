@@ -27,12 +27,19 @@ function loadWorkspaceSettings() {
     setting("workspace-name").value = workspace.name;
     setting("workspace-theme").value = workspace.theme;
     setting("workspace-profile").value = workspace.profile;
+
+    setting("workspace-name").addEventListener("input", saveWorkspaceSettings);
+    setting("workspace-theme").addEventListener("input", saveWorkspaceSettings);
+    setting("workspace-profile").addEventListener("input", saveWorkspaceSettings);
 }
 
 function loadProfileSettings() {
     const setting = x => document.getElementById(x);
     setting("profile-name").value = profile.name;
     setting("profile-theme").value = profile.theme;
+
+    setting("profile-name").addEventListener("input", saveProfileSettings);
+    setting("profile-theme").addEventListener("input", saveProfileSettings);
 }
 
 function loadMainfileSettings() {
@@ -46,12 +53,18 @@ function saveWorkspaceSettings() {
     workspace.theme = setting("workspace-theme").value;
     workspace.profile = setting("workspace-profile").value;
     window._api.write("main.json", JSON.stringify(window.mainfile));
-    window._api.write(mainfile.workspace[mainfile.latest_workspace], JSON.stringify(window.workspace));
+    window._api.write(mainfile.workspaces[mainfile.latest_workspace], JSON.stringify(window.workspace));
 }
 
 function saveProfileSettings() {
     const setting = x => document.getElementById(x);
     profile.name = setting("profile-name").value;
     profile.theme = setting("profile-theme").value;
-    window._api.write(mainfile.profiles[mainfile.latest_profile], JSON.stringify(window.profile));
+    window._api.write(mainfile.profiles[mainfile.default_profile], JSON.stringify(window.profile));
 }
+
+function save() {
+    saveWorkspaceSettings();
+    saveProfileSettings();
+}
+

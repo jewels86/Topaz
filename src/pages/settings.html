@@ -10,16 +10,19 @@
     </head>
     <body class="horizontal-flex-left no-extra">
         <div style="width: 30vw;" class="back-secondary vertical-flex">
-            <button class="bare-btn pad" onclick="openPage('workspace')">Workspace</button>
-            <button class="bare-btn pad" onclick="openPage('profile')">Profile</button>
-            <button class="bare-btn pad" onclick="openPage('mainfile')">Mainfile</button>
+            <div class="vertical-flex">
+                <button class="bare-btn pad" onclick="openPage('workspace')">Workspace</button>
+                <button class="bare-btn pad" onclick="openPage('profile')">Profile</button>
+                <button class="bare-btn pad" onclick="openPage('mainfile')">Mainfile</button>
+            </div>
+            <button class="save-btn pad" onclick="save()">Save</button>
         </div>
         <div class="grow" style="width: 69vw;">
             <div id="workspace" class="section vertical-flex">
                 <h1>Workspace</h1>
                 <div class="setting">
                     <p>Workspace Name</p>
-                    <input type="text" id="workspace-name" value="">
+                    <input type="text" id="workspace-name" value="" onchange="save()">
                 </div>
                 <div class="setting">
                     <p>Workspace Theme</p>
