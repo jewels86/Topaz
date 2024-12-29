@@ -25,7 +25,7 @@ app.whenReady().then(() => {
     ipcMain.handle('show', (ev, args) => win.show())
 
     ipcMain.on('open-settings', () => openSettings())
-    ipcMain.on('open-new-widget', () => openNewWidget)
+    ipcMain.on('open-new-widget', () => openNewWidget())
 
     win.loadFile('pages/index.html')
     win.once('ready-to-show', () => { win.show(); win.maximize(); win.focus() })
