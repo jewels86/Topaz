@@ -5,3 +5,14 @@ async function startNewWidget() {
     window._vars = {};
     setTheme(profile.theme);
 }
+
+function finish() {
+    _api.createWidget(
+        document.getElementById("id").value, // !! this wont work
+        document.getElementById("name").value,
+        document.getElementById("author").value,
+        document.getElementById("y").value,
+        document.getElementById("h").value,
+        document.getElementById("w").value
+    );
+}
