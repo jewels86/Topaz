@@ -40,7 +40,9 @@ app.whenReady().then(() => {
         if (settingsWindow != undefined) { 
             if (!settingsWindow.isDestroyed()) settingsWindow.close() 
         }
-        if (widgetWindow != undefined) widgetWindow.close()
+        if (widgetWindow != undefined) { 
+            if (!widgetWindow.isDestroyed()) widgetWindow.close()
+        }
         win.webContents.send('close?')
     })
 
@@ -66,13 +68,8 @@ function openSettings() {
     settingsWindow.loadFile("pages/settings.html")
 
     settingsWindow.on('close', (ev) => {
-        ev.preventDefault()
-        settingsWindow.hide()
-        settingsWindow.webContents.send("close-settings?")
         settingsWindow.destroy()
     })
-    ipcMain.on('close-settings', () => settingsWindow.destroy())
-    ipcMain.emit('settings-changed')
 }
 
 function openNewWidget() {
@@ -91,9 +88,6 @@ function openNewWidget() {
     widgetWindow.show()
 
     widgetWindow.on('close', (ev) => {
-        ev.preventDefault()
-        widgetWindow.hide()
-        widgetWindow.webContents.send("close-widget?");
+        widgetWindow.destroy()
     })
-    ipcMain.on('close-widget', () => widgetWindow.destroy())
 }
