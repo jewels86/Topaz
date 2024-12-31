@@ -74,8 +74,8 @@ function openSettings() {
 
 function openNewWidget() {
     widgetWindow = new BrowserWindow({
-        width: 600,
-        height: 600,
+        width: 300,
+        height: 410,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
         },

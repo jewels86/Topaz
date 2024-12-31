@@ -7,12 +7,14 @@ async function startNewWidget() {
 }
 
 function finish() {
-    _api.createWidget(
-        document.getElementById("id").value, // !! this wont work
-        document.getElementById("name").value,
-        document.getElementById("author").value,
-        document.getElementById("y").value,
-        document.getElementById("h").value,
-        document.getElementById("w").value
-    );
+    const widget = {
+        name: document.getElementById("name").value,
+        x: document.getElementById("x").value,
+        y: document.getElementById("y").value,
+        width: document.getElementById("width").value,
+        height: document.getElementById("height").value,
+        id: document.getElementById("id").value
+    }
+    window.workspace.widgets.push(widget);
+    window._api.write(mainfile.workspaces[mainfile.latest_workspace], JSON.stringify(window.workspace));
 }

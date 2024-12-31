@@ -295,7 +295,7 @@ async function end() {
 }
 
 function _newWidget() {
-    _api.subscribeToWidgetCreated((id, name, x, y, height, width) => newWidget(id, name, x, y, height, width));
+    _api.subscribeToWidgetCreated((id, name, x, y, height, width) => {newWidget(id, name, x, y, height, width); console.log("Widget created!")});
     _api.openNewWidget();
 }
 
