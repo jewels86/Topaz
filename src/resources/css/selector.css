@@ -1,0 +1,19 @@
+header {
+    app-region: drag;
+}
+
+h1 {
+    font-size: 60px;
+    color: var(--accent-1);
+}
+
+#topbar > button {
+    margin: 2vh 1vw;
+    color: var(--text-2);
+}
+#topbar > button:hover {
+    color: var(--text-1);
+}
+#topbar > button > i {
+    margin: 0 0.5vw;
+}

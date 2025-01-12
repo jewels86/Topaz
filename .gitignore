@@ -2,3 +2,4 @@ node_modules
 **/main.json
 **/profiles
 **/workspaces
+package-lock.json

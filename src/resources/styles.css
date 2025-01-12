@@ -1,0 +1,50 @@
+/* Topaz default style (dark-gold) */
+:root {
+    --background-2: #1C1C1C;
+    --background-1: #121212;
+    --background-3: #333333;
+    --accent-1: #FFD700;
+    --accent-2: #9966CC;
+    --text-1: #D3D3D3;
+    --text-2: #A6A6A6;
+    --text-3: #A6A6A6;
+}
+
+html, body {
+    font-family: Helvetica, Arial;
+    background-color: var(--background-1);
+    color: var(--text-1);
+}
+
+.vertical-flex {
+    display: flex;
+    flex-direction: column;
+}
+.horizontal-flex {
+    display: flex;
+    flex-direction: row;
+}
+.justify-center {
+    justify-content: center;
+}
+.align-center {
+    align-items: center;
+}
+.justify-space-between {
+    justify-content: space-between;
+}
+.justify-space-around {
+    justify-content: space-around;
+}
+.no-button-style {
+    background-color: transparent;
+    border: none;
+    color: inherit;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+}
+.text-center {
+    text-align: center;
+}
