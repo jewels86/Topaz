@@ -1,6 +1,6 @@
 {
   "name": "topaz",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Seamlessly integrate your work and life with one powerful platform.",
   "main": "src/main.js",
   "dependencies": {},

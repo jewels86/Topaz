@@ -28,6 +28,7 @@ body { min-height: 100vh; }
     justify-content: space-around;
 }
 .no-button-style {
+    all: unset;
     background-color: transparent;
     border: none;
     color: inherit;
@@ -35,6 +36,7 @@ body { min-height: 100vh; }
     font: inherit;
     cursor: pointer;
     outline: inherit;
+    height: fit-content;
 }
 .text-center {
     text-align: center;

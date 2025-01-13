@@ -56,7 +56,7 @@ async function bootstrap() {
 
 function loadTheme(theme) {
     const body = document.body.style;
-    console.log(theme);
+
     body.setProperty('--background-1', theme.background1);
     body.setProperty('--background-2', theme.background2);
     body.setProperty('--background-3', theme.background3);
@@ -66,6 +66,4 @@ function loadTheme(theme) {
     body.setProperty('--text-1', theme.text1);
     body.setProperty('--text-2', theme.text2);
     body.setProperty('--text-3', theme.text3);
-
-    return body;
 }

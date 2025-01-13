@@ -4,7 +4,7 @@ async function main() {
     console.log("Loading theme...");
 
     const profile = JSON.parse(await _api.read(await window._api.getDirectory() + "\\" + window._data.mainfile.default_profile.replace("/", "\\")));
-    const styles = loadTheme(profile.theme);
+    loadTheme(profile.theme);
     console.log("Theme loaded.");
     window._api.setTitleBarColor(profile.theme.background3);
 
@@ -13,10 +13,10 @@ async function main() {
         element.classList.add("workspace");
         element.innerHTML = `
         <div>
-            <h2>${workspace.name}</h2>
+            <button class="no-button-style"><h2>${workspace.name}</h2></button>
             <h3>${workspace.path}</h3>
         </div>
-        <p>${workspace.last_accessed}</p>
+        <p>Last Accessed: ${workspace.last_accessed}</p>
         `
         document.getElementById("workspaces").appendChild(element);
     });

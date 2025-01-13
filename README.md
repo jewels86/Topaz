@@ -10,7 +10,7 @@ If all goes well, **Topaz** will be a complete desktop app for all the major ope
 - Keyboard Shortcuts
 
 ## Development Progress
-Topaz is currently in development. I'd say it's around 60% finished, with the last parts specified in the todos.
+Topaz is currently in development. I just restarted, so there isn't much that's done so far.
 Feel free to contribute!
 
 ### Building from Source
@@ -29,8 +29,3 @@ npm start
 
 ## Todos
 - Finish!
-- Add new widget option
-- Add get and set methods for private data
-- Add more pre-installed themes and widgets
-- Clean up the UI
-- Extensions?

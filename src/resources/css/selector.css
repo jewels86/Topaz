@@ -17,3 +17,31 @@ h1 {
 #topbar > button > i {
     margin: 0 0.5vw;
 }
+
+#workspaces > div {
+    margin: 2vh 1vw;
+    padding: 1vh 1vw;
+    background-color: var(--background-2);
+    width: 96vw;
+    display: flex;
+    flex-direction: row;
+}
+#workspaces > div > div, #workspaces > div > p {
+    width: 46%;
+    margin: 0 1%;
+}
+#workspaces > div > div > button > h2 {
+    font-size: 20px;
+    color: var(--accent-2);
+    margin-bottom: 0;
+}
+#workspaces > div > div > h3 {
+    font-size: 16px;
+    color: var(--text-2);
+}
+#workspaces > div > p {
+    font-size: 16px;
+    color: var(--text-1);
+    align-self: center;
+    text-align: center;
+}
