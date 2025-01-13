@@ -7,6 +7,19 @@ async function main() {
     const styles = loadTheme(profile.theme);
     console.log("Theme loaded.");
     window._api.setTitleBarColor(profile.theme.background3);
+
+    window._data.mainfile.known_workspaces.forEach(workspace => {
+        const element = document.createElement("div");
+        element.classList.add("workspace");
+        element.innerHTML = `
+        <div>
+            <h2>${workspace.name}</h2>
+            <h3>${workspace.path}</h3>
+        </div>
+        <p>${workspace.last_accessed}</p>
+        `
+        document.getElementById("workspaces").appendChild(element);
+    });
 }
 
 main();
