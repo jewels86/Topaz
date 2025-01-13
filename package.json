@@ -1,6 +1,6 @@
 {
   "name": "topaz",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Seamlessly integrate your work and life with one powerful platform.",
   "main": "src/main.js",
   "dependencies": {},
@@ -8,7 +8,8 @@
     "electron": "^33.3.1"
   },
   "scripts": {
-    "start": "electron src/main.js"
+    "start": "electron src/main.js",
+    "clean-win": "Remove-Item -Recurse -Force node_modules"
   },
   "repository": {
     "type": "git",

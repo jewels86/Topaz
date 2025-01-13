@@ -21,8 +21,9 @@ function createSelectorWindow() {
     ipcMain.on('setTitleBarColor', (event, color) => { win.setTitleBarOverlay({ color }) })
     ipcMain.handle('getDirectory', () => dir)
     ipcMain.handle('exists', (event, path) => fs.existsSync(path))
-    ipcMain.handle('write', (event, path, data) => fs.writeFileSync(path, data))
+    ipcMain.handle('write', (event, path, data) => { console.log(path); return fs.writeFileSync(path, data) })
     ipcMain.handle('read', (event, path) => fs.readFileSync(path, 'utf8'))
+    ipcMain.handle('tryCreateDir', (event, path) => fs.mkdirSync(path, { recursive: true }))
 
     win.loadFile('pages/selector.html')
 }
