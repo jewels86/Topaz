@@ -4,15 +4,15 @@ header {
 
 h1 {
     font-size: 60px;
-    color: var(--accent-1);
+    color: var(--heading);
 }
 
 #topbar > button {
     margin: 2vh 1vw;
-    color: var(--text-2);
+    color: var(--buttons);
 }
 #topbar > button:hover {
-    color: var(--text-1);
+    color: var(--buttons-hover);
 }
 #topbar > button > i {
     margin: 0 0.5vw;
@@ -21,7 +21,7 @@ h1 {
 #workspaces > div {
     margin: 2vh 1vw;
     padding: 1vh 1vw;
-    background-color: var(--background-2);
+    background-color: var(--workspace-background);
     width: 96vw;
     display: flex;
     flex-direction: row;
@@ -32,16 +32,19 @@ h1 {
 }
 #workspaces > div > div > button > h2 {
     font-size: 20px;
-    color: var(--accent-2);
-    margin-bottom: 0;
+    color: var(--workspace-name);
+    margin: 1vh;
+    font-weight: bold;
 }
 #workspaces > div > div > h3 {
     font-size: 16px;
-    color: var(--text-2);
+    color: var(--workspace-path);
+    margin: 1vh;
+    font-weight: normal;
 }
 #workspaces > div > p {
     font-size: 16px;
-    color: var(--text-1);
+    color: var(--last-accessed);
     align-self: center;
     text-align: center;
 }

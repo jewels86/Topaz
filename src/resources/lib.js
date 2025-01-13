@@ -47,23 +47,9 @@ async function bootstrap() {
     if (await checkForMainfile() == true) {
         console.log("Mainfile found. Loading data into _data...");
         await loadMainfile();
-        console.log("Data loaded. Waiting for response from handler script...");
+        console.log("Data loaded. Waiting for handler script...");
     } else {
         console.log("No mainfile found. Creating new...");
         await handleNew();
     }
-}
-
-function loadTheme(theme) {
-    const body = document.body.style;
-
-    body.setProperty('--background-1', theme.background1);
-    body.setProperty('--background-2', theme.background2);
-    body.setProperty('--background-3', theme.background3);
-    body.setProperty('--accent-1', theme.accent1);
-    body.setProperty('--accent-2', theme.accent2);
-    body.setProperty('--accent-3', theme.accent3);
-    body.setProperty('--text-1', theme.text1);
-    body.setProperty('--text-2', theme.text2);
-    body.setProperty('--text-3', theme.text3);
 }
