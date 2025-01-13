@@ -10,13 +10,14 @@ function createSelectorWindow() {
         height: 600,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
-            resizable: false,
         },
         titleBarStyle: 'hidden',
         titleBarOverlay: {
             color: '#000'
         }
     })
+    win.maximizable = false
+    win.resizable = false
 
     ipcMain.on('setTitleBarColor', (event, color) => { win.setTitleBarOverlay({ color }) })
     ipcMain.handle('getDirectory', () => dir)
