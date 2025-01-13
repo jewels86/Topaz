@@ -18,7 +18,7 @@ h1 {
     margin: 0 0.5vw;
 }
 
-#workspaces > div {
+.workspace {
     margin: 2vh 1vw;
     padding: 1vh 1vw;
     background-color: var(--workspace-background);
@@ -26,25 +26,28 @@ h1 {
     display: flex;
     flex-direction: row;
 }
-#workspaces > div > div, #workspaces > div > p {
+.workspace > div, #workspaces > div > p {
     width: 46%;
     margin: 0 1%;
 }
-#workspaces > div > div > button > h2 {
+.workspace > div > button > h2 {
     font-size: 20px;
     color: var(--workspace-name);
     margin: 1vh;
     font-weight: bold;
 }
-#workspaces > div > div > h3 {
+.workspace > div > h3 {
     font-size: 16px;
     color: var(--workspace-path);
     margin: 1vh;
     font-weight: normal;
 }
-#workspaces > div > p {
+.workspace > p {
     font-size: 16px;
     color: var(--last-accessed);
     align-self: center;
     text-align: center;
+}
+.workspace:hover {
+    background-color: var(--workspace-hover);
 }
