@@ -38,4 +38,8 @@ async function main() {
     });
 }
 
+function newWorkspace() {
+    
+}
+
 main();
