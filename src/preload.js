@@ -7,5 +7,8 @@ contextBridge.exposeInMainWorld('_api', {
     exists:             (path) => ipcRenderer.invoke('exists', path),
     write:              (path, data) => ipcRenderer.invoke('write', path, data),
     read:              (path) => ipcRenderer.invoke('read', path),
-    tryCreateDir:       (path) => ipcRenderer.invoke('tryCreateDir', path)
+    tryCreateDir:       (path) => ipcRenderer.invoke('tryCreateDir', path),
+
+    // selector.js
+    openIndex:          () => ipcRenderer.invoke('openIndex')
 })

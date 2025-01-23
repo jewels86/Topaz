@@ -19,31 +19,9 @@ async function main() {
     console.log("Loading theme...");
 
     const profile = JSON.parse(await _api.read(await window._api.getDirectory() + "\\" + window._data.mainfile.default_profile));
-    loadTheme(profile.theme.selector);
-    
+    loadTheme(profile.theme.index);
+
     console.log("Theme loaded.");
-    window._api.setTitleBarColor(profile.theme.selector.title_buttons);
-
-    window._data.mainfile.known_workspaces.forEach(workspace => {
-        const element = document.createElement("div");
-        element.classList.add("workspace");
-        element.innerHTML = `
-        <div onclick="openIndex('${workspace.path}')">
-            <h2>${workspace.name}</h2>
-            <h3>${workspace.path}</h3>
-        </div>
-        <p>Last Accessed: ${workspace.last_accessed}</p>
-        `
-        document.getElementById("workspaces").appendChild(element);
-    });
 }
 
-function openIndex(workspace) {
-    window._api.openIndex(workspace);
-}
-
-function newWorkspace() {
-    
-}
-
-main();
+main()

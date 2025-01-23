@@ -30,7 +30,7 @@ h1 {
     width: 46%;
     margin: 0 1%;
 }
-.workspace > div > button > h2 {
+.workspace > div > h2 {
     font-size: 20px;
     color: var(--workspace-name);
     margin: 1vh;
@@ -41,7 +41,6 @@ h1 {
     color: var(--workspace-path);
     margin: 1vh;
     font-weight: normal;
-    cursor: default;
 }
 .workspace > p {
     font-size: 16px;
