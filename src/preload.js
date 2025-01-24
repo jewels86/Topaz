@@ -11,6 +11,8 @@ contextBridge.exposeInMainWorld('_api', {
     isAbsolute:         (path) => ipcRenderer.invoke('isAbsolute', path),
     pathJoin:           (...paths) => ipcRenderer.invoke('pathJoin', ...paths),
 
+    workspace:          () => ipcRenderer.invoke('workspace'),
+
     // selector.js
-    openIndex:          () => ipcRenderer.invoke('openIndex')
+    openIndex:          (workspace) => ipcRenderer.invoke('openIndex')
 })

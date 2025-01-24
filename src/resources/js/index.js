@@ -18,13 +18,13 @@ async function main() {
     console.log("Bootstrapped.");
     console.log("Loading workspace...");
 
-    const workspacePath = await _api.workspace();
-    const workspace = JSON.parse(await _api.read(resolveFilePath(workspacePath)));
+    const workspacePath = String(await _api.workspace());
+    const workspace = JSON.parse(await _api.read(await resolveFilePath(workspacePath)));
     window.workspace = workspace;
 
     console.log("Loading theme...");
 
-    const profile = JSON.parse(await _api.read(resolveFilePath(window.workspace.profile)));
+    const profile = JSON.parse(await _api.read(await resolveFilePath(window.workspace.profile)));
     loadTheme(profile.theme.index);
     window.profile = profile;
 

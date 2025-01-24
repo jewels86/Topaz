@@ -3,10 +3,13 @@ const path = require('path')
 const fs = require('fs')
 
 const dir = path.dirname(app.getPath('exe'))
+var global = { 
+    selectorWin: null, dir: dir,
+    workspace: null, profile: null 
+}
 
 function createSelectorWindow() {
-    global = { win: null, dir: dir }
-    const win = new BrowserWindow({
+    const selectorWin = new BrowserWindow({
         width: 800,
         height: 600,
         webPreferences: {
@@ -17,26 +20,30 @@ function createSelectorWindow() {
             color: '#000'
         }
     })
-    win.maximizable = false
-    win.resizable = false
+    selectorWin.maximizable = false
+    selectorWin.resizable = false
 
-    ipcMain.on('setTitleBarColor', (event, color) => { win.setTitleBarOverlay({ color }) })
+    ipcMain.on('setTitleBarColor', (event, color) => { selectorWin.setTitleBarOverlay({ color }) })
     ipcMain.handle('getDirectory', () => dir)
     ipcMain.handle('exists', (event, path) => fs.existsSync(path))
     ipcMain.handle('write', (event, path, data) => { console.log(path); return fs.writeFileSync(path, data) })
     ipcMain.handle('read', (event, path) => fs.readFileSync(path, 'utf8'))
     ipcMain.handle('tryCreateDir', (event, path) => fs.mkdirSync(path, { recursive: true }))
-    ipcMain.handle('isAbsolute', (event, path) => path.isAbsolute(path))
+    ipcMain.handle('isAbsolute', (event, _path) => path.isAbsolute(_path))
     ipcMain.handle('pathJoin', (event, ...paths) => path.join(...paths))
+    ipcMain.handle('workspace', () => global.workspace)
+    ipcMain.handle('profile', () => global.profile)
+    ipcMain.handle('setWorkspace', (event, workspace) => global.workspace = workspace)
+    ipcMain.handle('setProfile', (event, profile) => global.profile = profile)
+    ipcMain.handle('openIndex', (workspace) => createIndexWindow(workspace))
 
-    ipcMain.handle('openIndex', () => createIndexWindow())
-
-    win.loadFile('pages/selector.html')
-    global.win = win
+    selectorWin.loadFile('pages/selector.html')
+    global.selectorWin = selectorWin
 }
 
-function createIndexWindow() {
-    global.win.close()
+function createIndexWindow(workspace) {
+    global.selectorWin.close()
+    global.workspace = workspace
 
     const indexWin = new BrowserWindow({
         width: 1200,
@@ -48,6 +55,7 @@ function createIndexWindow() {
     indexWin.maximized = true
 
     indexWin.loadFile('pages/index.html')
+    global.indexWin = indexWin
 }
 
 app.whenReady().then(createSelectorWindow)
