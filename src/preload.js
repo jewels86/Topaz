@@ -8,6 +8,8 @@ contextBridge.exposeInMainWorld('_api', {
     write:              (path, data) => ipcRenderer.invoke('write', path, data),
     read:              (path) => ipcRenderer.invoke('read', path),
     tryCreateDir:       (path) => ipcRenderer.invoke('tryCreateDir', path),
+    isAbsolute:         (path) => ipcRenderer.invoke('isAbsolute', path),
+    pathJoin:           (...paths) => ipcRenderer.invoke('pathJoin', ...paths),
 
     // selector.js
     openIndex:          () => ipcRenderer.invoke('openIndex')

@@ -26,6 +26,8 @@ function createSelectorWindow() {
     ipcMain.handle('write', (event, path, data) => { console.log(path); return fs.writeFileSync(path, data) })
     ipcMain.handle('read', (event, path) => fs.readFileSync(path, 'utf8'))
     ipcMain.handle('tryCreateDir', (event, path) => fs.mkdirSync(path, { recursive: true }))
+    ipcMain.handle('isAbsolute', (event, path) => path.isAbsolute(path))
+    ipcMain.handle('pathJoin', (event, ...paths) => path.join(...paths))
 
     ipcMain.handle('openIndex', () => createIndexWindow())
 
