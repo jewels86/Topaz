@@ -14,5 +14,5 @@ contextBridge.exposeInMainWorld('_api', {
     workspace:          () => ipcRenderer.invoke('workspace'),
 
     // selector.js
-    openIndex:          (workspace) => ipcRenderer.invoke('openIndex')
+    openIndex:          (workspace) => ipcRenderer.invoke('openIndex', workspace)
 })

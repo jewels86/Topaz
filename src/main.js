@@ -35,7 +35,7 @@ function createSelectorWindow() {
     ipcMain.handle('profile', () => global.profile)
     ipcMain.handle('setWorkspace', (event, workspace) => global.workspace = workspace)
     ipcMain.handle('setProfile', (event, profile) => global.profile = profile)
-    ipcMain.handle('openIndex', (workspace) => createIndexWindow(workspace))
+    ipcMain.handle('openIndex', (ev, workspace) => createIndexWindow(workspace))
 
     selectorWin.loadFile('pages/selector.html')
     global.selectorWin = selectorWin
@@ -44,6 +44,7 @@ function createSelectorWindow() {
 function createIndexWindow(workspace) {
     global.selectorWin.close()
     global.workspace = workspace
+    console.log(workspace)
 
     const indexWin = new BrowserWindow({
         width: 1200,
@@ -52,7 +53,7 @@ function createIndexWindow(workspace) {
             preload: path.join(__dirname, 'preload.js'),
         },
     })
-    indexWin.maximized = true
+    indexWin.maximize()
 
     indexWin.loadFile('pages/index.html')
     global.indexWin = indexWin
