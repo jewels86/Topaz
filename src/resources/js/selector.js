@@ -27,8 +27,9 @@ async function main() {
     window._data.mainfile.known_workspaces.forEach(workspace => {
         const element = document.createElement("div");
         element.classList.add("workspace");
+        element.onclick = () => openIndex(workspace.path);
         element.innerHTML = `
-        <div onclick="openIndex('${workspace.path}')">
+        <div>
             <h2>${workspace.name}</h2>
             <h3>${workspace.path}</h3>
         </div>
