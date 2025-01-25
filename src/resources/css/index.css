@@ -10,21 +10,15 @@ main {
     background-color: var(--background);
 }
 
-#status-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: var(--status-bar);
-    color: var(--status-bar-text);
-    height: 22px;
-    font-size: 15Spx;
-}
 .status-bar-item {
-    padding: 0 10px;
+    padding: 3px 6px;
     margin: 0;
+    font-size: 12px;
+    color: var(--status-bar-text);
     cursor: default;
+    font-size: var(--status-bar-font-size);
 }
 .status-bar-button:hover {
-    color: var(--status-bar-hover);
+    background-color: var(--status-bar-hover);
     cursor: pointer;
 }

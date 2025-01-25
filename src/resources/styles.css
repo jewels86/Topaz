@@ -41,3 +41,22 @@ body { min-height: 100vh; }
 .text-center {
     text-align: center;
 }
+.width-full {
+    width: 100%;
+}
+.height-fit {
+    height: fit-content;
+}
+.justify-left {
+    justify-content: flex-start;
+}
+.justify-right {
+    justify-content: flex-end;
+}
+.margin10px {
+    margin: 10px;
+}
+.space-between {
+    display: flex;
+    justify-content: space-between;
+}

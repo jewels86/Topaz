@@ -18,7 +18,7 @@ function createSelectorWindow() {
         titleBarStyle: 'hidden',
         titleBarOverlay: {
             color: '#000'
-        }
+        },
     })
     selectorWin.maximizable = false
     selectorWin.resizable = false
@@ -38,6 +38,7 @@ function createSelectorWindow() {
     ipcMain.handle('openIndex', (ev, workspace) => createIndexWindow(workspace))
 
     selectorWin.loadFile('pages/selector.html')
+
     global.selectorWin = selectorWin
 }
 
@@ -52,10 +53,12 @@ function createIndexWindow(workspace) {
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
         },
+        show: false,
     })
     indexWin.maximize()
 
     indexWin.loadFile('pages/index.html')
+    indexWin.once('ready-to-show', () => indexWin.show())
     global.indexWin = indexWin
 }
 
