@@ -23,14 +23,14 @@ async function handleNew() {
     workspaceTemplate.name = "Main Workspace";
     console.log(workspaceTemplate);
     const workspacePath = `${dir}\\${template.known_workspaces[0].path}`;
-    await _api.write(workspacePath, JSON.stringify(workspaceTemplate));
+    await _api.write(workspacePath, JSON.stringify(workspaceTemplate, null, 4));
     console.log("Workspace template written.");
 
     const profileTemplateRes = await fetch("https://jewels86.me/static/topaz/profile-template.json");
     const profileTemplate = await profileTemplateRes.json();
     profileTemplate.name = "Main Profile";
     const profilePath = `${dir}\\${template.known_profiles[0].path}`;
-    await _api.write(profilePath, JSON.stringify(profileTemplate));
+    await _api.write(profilePath, JSON.stringify(profileTemplate, null, 4));
     console.log("Profile template written.");
 
     console.log("Reloading window...");

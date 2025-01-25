@@ -1,11 +1,11 @@
 function loadTheme(theme) {
     const html = document.getElementsByTagName("html")[0];
-    html.style.setProperty("--background", cleanCSS(theme.background));
-    html.style.setProperty("--status-bar", cleanCSS(theme.status_bar));
-    html.style.setProperty("--status-bar-text", cleanCSS(theme.status_bar_text));
-    html.style.setProperty("--status-bar-hover", cleanCSS(theme.status_bar_hover));
-    html.style.setProperty("--status-bar-hover-text", cleanCSS(theme.status_bar_hover_text));
-    html.style.setProperty("--status-bar-font-size", cleanCSS(theme.status_bar_font_size));
+    html.style.setProperty("--background", escapeCSS(theme.background));
+    html.style.setProperty("--status-bar", escapeCSS(theme.status_bar));
+    html.style.setProperty("--status-bar-text", escapeCSS(theme.status_bar_text));
+    html.style.setProperty("--status-bar-hover", escapeCSS(theme.status_bar_hover));
+    html.style.setProperty("--status-bar-hover-text", escapeCSS(theme.status_bar_hover_text));
+    html.style.setProperty("--status-bar-font-size", escapeCSS(theme.status_bar_font_size));
 }
 
 async function main() {

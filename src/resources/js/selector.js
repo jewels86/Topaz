@@ -1,16 +1,16 @@
 function loadTheme(theme) {
     const html = document.getElementsByTagName("html")[0];
-    html.style.setProperty("--background", cleanCSS(theme.background));
-    html.style.setProperty("--title-buttons", cleanCSS(theme.title_buttons));
-    html.style.setProperty("--heading", cleanCSS(theme.heading));
-    html.style.setProperty("--buttons", cleanCSS(theme.buttons));
-    html.style.setProperty("--buttons-hover", cleanCSS(theme.buttons_hover));
-    html.style.setProperty("--workspace-name", cleanCSS(theme.workspace_name));
-    html.style.setProperty("--workspace-path", cleanCSS(theme.workspace_path));
-    html.style.setProperty("--last-accessed", cleanCSS(theme.last_accessed));
-    html.style.setProperty("--workspace-background", cleanCSS(theme.workspace_background));
-    html.style.setProperty("--workspace-hover", cleanCSS(theme.workspace_hover));
-    html.style.setProperty("--text", cleanCSS(theme.text));
+    html.style.setProperty("--background", escapeCSS(theme.background));
+    html.style.setProperty("--title-buttons", escapeCSS(theme.title_buttons));
+    html.style.setProperty("--heading", escapeCSS(theme.heading));
+    html.style.setProperty("--buttons", escapeCSS(theme.buttons));
+    html.style.setProperty("--buttons-hover", escapeCSS(theme.buttons_hover));
+    html.style.setProperty("--workspace-name", escapeCSS(theme.workspace_name));
+    html.style.setProperty("--workspace-path", escapeCSS(theme.workspace_path));
+    html.style.setProperty("--last-accessed", escapeCSS(theme.last_accessed));
+    html.style.setProperty("--workspace-background", escapeCSS(theme.workspace_background));
+    html.style.setProperty("--workspace-hover", escapeCSS(theme.workspace_hover));
+    html.style.setProperty("--text", escapeCSS(theme.text));
 }
 
 async function main() {
@@ -43,8 +43,19 @@ function openIndex(workspace) {
     window._api.openIndex(workspace);
 }
 
-function newWorkspace() {
-    
+async function newWorkspace() {
+    const template = await fetch("https://jewels86.me/static/topaz/workspace-template.json").then(response => response.json());
+    template.name = "New Workspace";
+    const date = new Date().toISOString().split('T')[0];
+    template.path = `workspaces/new-workspace-${date}.workspace.tpz`;
+    template.last_accessed = "Never";
+    _api.write(await resolveFilePath(template.path), JSON.stringify(template, null, 4));
+
+    const mainfile = JSON.parse(await _api.read(await resolveFilePath("main.json")));
+    mainfile.known_workspaces.push({ name: template.name, path: template.path, last_accessed: template.last_accessed });
+    await _api.write(await resolveFilePath("main.json"), JSON.stringify(mainfile, null, 4));
+
+    window.location.reload();
 }
 
 main();
