@@ -1,0 +1,75 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [win32, linux, darwin]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build for ${{ matrix.platform }}
+        run: npm run package-${{ matrix.platform }}
+
+      - name: Archive build artifacts
+        if: startsWith(matrix.platform, 'win32')
+        run: zip -r Topaz-win.zip dist/Topaz-win32-x64/
+        
+      - name: Archive build artifacts
+        if: startsWith(matrix.platform, 'linux')
+        run: zip -r Topaz-linux.zip dist/Topaz-linux-x64/
+        
+      - name: Archive build artifacts
+        if: startsWith(matrix.platform, 'darwin')
+        run: zip -r Topaz-mac.zip dist/Topaz-darwin-x64/
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.platform }}-build
+          path: |
+            dist/Topaz-win.zip
+            dist/Topaz-linux.zip
+            dist/Topaz-mac.zip
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Release of version ${{ github.ref }}.
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Assets
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/Topaz-${{ matrix.platform }}.zip
+          asset_name: Topaz-${{ matrix.platform }}.zip
+          asset_content_type: application/zip
