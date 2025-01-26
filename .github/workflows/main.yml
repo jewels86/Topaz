@@ -27,7 +27,7 @@ jobs:
         run: npm run package-${{ matrix.platform }}
 
       - name: Archive build artifacts
-        if: startsWith(matrix.platform, 'win32')
+        if: startsWith(matrix.platform, 'win')
         run: zip -r dist/Topaz-win.zip dist/Topaz-win32-x64/
         
       - name: Archive build artifacts
