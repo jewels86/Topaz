@@ -13,7 +13,7 @@ function createSelectorWindow() {
         width: 800,
         height: 600,
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
+            preload: path.join(__dirname, 'src', 'preload.js'),
         },
         titleBarStyle: 'hidden',
         titleBarOverlay: {
@@ -37,7 +37,7 @@ function createSelectorWindow() {
     ipcMain.handle('setProfile', (event, profile) => global.profile = profile)
     ipcMain.handle('openIndex', (ev, workspace) => createIndexWindow(workspace))
 
-    selectorWin.loadFile('pages/selector.html')
+    selectorWin.loadFile('src/pages/selector.html')
 
     global.selectorWin = selectorWin
 }
@@ -51,13 +51,13 @@ function createIndexWindow(workspace) {
         width: 1200,
         height: 800,
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
+            preload: path.join(__dirname, 'src', 'preload.js'),
         },
         show: false,
     })
     indexWin.maximize()
 
-    indexWin.loadFile('pages/index.html')
+    indexWin.loadFile('src/pages/index.html')
     indexWin.once('ready-to-show', () => indexWin.show())
     global.indexWin = indexWin
 }

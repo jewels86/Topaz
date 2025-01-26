@@ -2,7 +2,7 @@
   "name": "topaz",
   "version": "0.2.6",
   "description": "Seamlessly integrate your work and life with one powerful platform.",
-  "main": "src/main.js",
+  "main": "main.js",
   "devDependencies": {
     "@electron-forge/cli": "^7.6.1",
     "@electron-forge/maker-deb": "^7.6.1",
@@ -12,13 +12,16 @@
     "@electron-forge/plugin-auto-unpack-natives": "^7.6.1",
     "@electron-forge/plugin-fuses": "^7.6.1",
     "@electron/fuses": "^1.8.0",
-    "electron": "^33.3.1"
+    "@electron/packager": "^18.3.6",
+    "electron": "^33.3.1",
+    "electron-packager": "^17.1.2"
   },
   "scripts": {
-    "start": "electron-forge start",
+    "start": "electron .",
     "clean-win": "del node_modules\\electron\\dist\\main.json && del /Q node_modules\\electron\\dist\\workspaces && del /Q node_modules\\electron\\dist\\profiles",
-    "package": "electron-forge package",
-    "make": "electron-forge make"
+    "package-win": "npx electron-packager . Topaz --platform=win32 --arch=x64 --out=dist --overwrite",
+    "package-linux": "npx electron-packager . Topaz --platform=linux --arch=x64 --out=dist --overwrite",
+    "package-mac": "npx electron-packager . Topaz --platform=darwin --arch=x64 --out=dist --overwrite"
   },
   "repository": {
     "type": "git",

@@ -3,5 +3,4 @@ node_modules
 **/profiles
 **/workspaces
 package-lock.json
-out/
-forge.config.js
+dist/
