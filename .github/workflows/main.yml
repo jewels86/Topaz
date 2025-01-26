@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        platform: [win, linux, darwin]
+        platform: [win, linux, mac]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -49,6 +49,9 @@ jobs:
 
   release:
     needs: build
+    strategy:
+      matrix:
+        platform: [win, linux, mac]
     runs-on: ubuntu-latest
     steps:
       - name: Create Release
