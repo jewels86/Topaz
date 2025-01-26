@@ -11,9 +11,14 @@ function loadTheme(theme) {
 async function main() {
     await bootstrap();
     console.log("Bootstrapped.");
+    console.log("Setting mainfile 'last_accessed' to current date...");
+    const mainfile = JSON.parse(await _api.read(await resolveFilePath("main.json")));
+    const workspacePath = await _api.workspace();
+    const knownWorkspaceIndex = mainfile.known_workspaces.findIndex(ws => ws.path === workspacePath);
+    mainfile.known_workspaces[knownWorkspaceIndex].last_accessed = new Date().toLocaleDateString("en-US");
+    await _api.write(await resolveFilePath("main.json"), JSON.stringify(mainfile, null, 4));
     console.log("Loading workspace...");
 
-    const workspacePath = await _api.workspace();
     const workspace = JSON.parse(await _api.read(await resolveFilePath(workspacePath)));
     window.workspace = workspace;
 
