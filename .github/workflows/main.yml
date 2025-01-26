@@ -49,24 +49,12 @@ jobs:
 
   release:
     needs: build
-    strategy:
-      matrix:
-        platform: [win, linux, mac]
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Get Release ID
-        id: get_release
-        run: |
-          release_id=$(gh release view ${{ github.ref }} --json id --jq '.id' || echo "")
-          echo "release_id=$release_id" >> $GITHUB_ENV
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create Release if Not Exists
-        if: ${{ env.release_id == '' }}
+      - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -74,17 +62,35 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          body: |
-            Release of version ${{ github.ref }}.
           draft: false
           prerelease: false
 
-      - name: Upload Release Assets
+      - name: Upload Release Asset (Windows)
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url || steps.get_release.outputs.upload_url }}
-          asset_path: dist/Topaz-${{ matrix.platform }}.zip
-          asset_name: Topaz-${{ matrix.platform }}.zip
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/Topaz-win.zip
+          asset_name: Topaz-win.zip
+          asset_content_type: application/zip
+
+      - name: Upload Release Asset (Linux)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/Topaz-linux.zip
+          asset_name: Topaz-linux.zip
+          asset_content_type: application/zip
+
+      - name: Upload Release Asset (Mac)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/Topaz-mac.zip
+          asset_name: Topaz-mac.zip
           asset_content_type: application/zip
