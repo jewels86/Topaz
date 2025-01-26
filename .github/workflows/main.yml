@@ -26,26 +26,24 @@ jobs:
       - name: Build for ${{ matrix.platform }}
         run: npm run package-${{ matrix.platform }}
 
+      - name: Install zip utility
+        run: sudo apt-get install -y zip
+
       - name: Archive build artifacts
-        if: startsWith(matrix.platform, 'win')
-        run: zip -r dist/Topaz-win.zip dist/Topaz-win32-x64/
-        
-      - name: Archive build artifacts
-        if: startsWith(matrix.platform, 'linux')
-        run: zip -r dist/Topaz-linux.zip dist/Topaz-linux-x64/
-        
-      - name: Archive build artifacts
-        if: startsWith(matrix.platform, 'darwin')
-        run: zip -r dist/Topaz-mac.zip dist/Topaz-darwin-x64/
+        run: |
+          if [ "${{ matrix.platform }}" == "win" ]; then
+            zip -r dist/Topaz-win.zip dist/Topaz-win32-x64/
+          elif [ "${{ matrix.platform }}" == "linux" ]; then
+            zip -r dist/Topaz-linux.zip dist/Topaz-linux-x64/
+          elif [ "${{ matrix.platform }}" == "mac" ]; then
+            zip -r dist/Topaz-mac.zip dist/Topaz-darwin-x64/
+          fi
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.platform }}-build
-          path: |
-            dist/Topaz-win.zip
-            dist/Topaz-linux.zip
-            dist/Topaz-mac.zip
+          path: dist/
 
   release:
     needs: build
@@ -53,6 +51,24 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Download Windows build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: win-build
+          path: dist/
+
+      - name: Download Linux build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: linux-build
+          path: dist/
+
+      - name: Download Mac build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: mac-build
+          path: dist/
 
       - name: Create GitHub Release
         id: create_release
@@ -65,7 +81,7 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Upload Release Asset (Windows)
+      - name: Upload Windows release asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -75,7 +91,7 @@ jobs:
           asset_name: Topaz-win.zip
           asset_content_type: application/zip
 
-      - name: Upload Release Asset (Linux)
+      - name: Upload Linux release asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -85,7 +101,7 @@ jobs:
           asset_name: Topaz-linux.zip
           asset_content_type: application/zip
 
-      - name: Upload Release Asset (Mac)
+      - name: Upload Mac release asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
