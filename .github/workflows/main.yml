@@ -28,15 +28,15 @@ jobs:
 
       - name: Archive build artifacts
         if: startsWith(matrix.platform, 'win32')
-        run: zip -r Topaz-win.zip dist/Topaz-win32-x64/
+        run: zip -r dist/Topaz-win.zip dist/Topaz-win32-x64/
         
       - name: Archive build artifacts
         if: startsWith(matrix.platform, 'linux')
-        run: zip -r Topaz-linux.zip dist/Topaz-linux-x64/
+        run: zip -r dist/Topaz-linux.zip dist/Topaz-linux-x64/
         
       - name: Archive build artifacts
         if: startsWith(matrix.platform, 'darwin')
-        run: zip -r Topaz-mac.zip dist/Topaz-darwin-x64/
+        run: zip -r dist/Topaz-mac.zip dist/Topaz-darwin-x64/
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
