@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        platform: [win32, linux, darwin]
+        platform: [win, linux, darwin]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
