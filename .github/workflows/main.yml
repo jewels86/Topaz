@@ -32,11 +32,11 @@ jobs:
       - name: Archive build artifacts
         run: |
           if [ "${{ matrix.platform }}" == "win" ]; then
-            zip -r dist/Topaz-win.zip dist/Topaz-win32-x64/
+            zip -r dist/topaz-win.zip dist/Topaz-win32-x64/
           elif [ "${{ matrix.platform }}" == "linux" ]; then
-            zip -r dist/Topaz-linux.zip dist/Topaz-linux-x64/
+            zip -r dist/topaz-linux.zip dist/Topaz-linux-x64/
           elif [ "${{ matrix.platform }}" == "mac" ]; then
-            zip -r dist/Topaz-mac.zip dist/Topaz-darwin-x64/
+            zip -r dist/topaz-mac.zip dist/Topaz-darwin-x64/
           fi
 
       - name: Upload build artifacts
@@ -87,8 +87,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/Topaz-win.zip
-          asset_name: Topaz-win.zip
+          asset_path: dist/topaz-win.zip
+          asset_name: topaz-win.zip
           asset_content_type: application/zip
 
       - name: Upload Linux release asset
@@ -97,8 +97,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/Topaz-linux.zip
-          asset_name: Topaz-linux.zip
+          asset_path: dist/topaz-linux.zip
+          asset_name: topaz-linux.zip
           asset_content_type: application/zip
 
       - name: Upload Mac release asset
@@ -107,6 +107,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/Topaz-mac.zip
-          asset_name: Topaz-mac.zip
+          asset_path: dist/topaz-mac.zip
+          asset_name: topaz-mac.zip
           asset_content_type: application/zip
