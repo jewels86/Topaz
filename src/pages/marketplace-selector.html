@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Topaz Marketplace Selector</title>
+        <link rel="stylesheet" href="../resources/styles.css">
+        <link rel="stylesheet" href="../resources/css/marketplace-selector.css">
+        <script defer src="../resources/js/marketplace-selector.js"></script>
+        <script src="../resources/functions.js"></script>
+        <script src="../resources/bootstrapping.js"></script>
+        <script src="https://kit.fontawesome.com/71ea2e3f82.js" crossorigin="anonymous"></script>
+    </head>
+    <body class="vertical-flex" style="height: 100%; margin: 0;">
+        <header class="text-center">
+            <h1>Marketplace Selector</h1>
+        </header>
+        <main class="vertical-flex" style="flex-grow: 1; overflow: hidden;">
+            <section class="horizontal-flex" id="topbar">
+                <button class="no-button-style" onclick="openSelector()"><i class="fa-solid fa-arrow-left"></i>Back</button>
+                <button class="no-button-style" onclick="newMarketplace()"><i class="fa-solid fa-plus"></i>New</button>
+            </section>
+            <section class="vertical-flex" id="marketplaces" style="flex-grow: 1; overflow-y: auto;"></section>
+        </main>
+    </body>
+</html>

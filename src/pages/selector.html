@@ -11,17 +11,19 @@
         <script src="../resources/bootstrapping.js"></script>
         <script src="https://kit.fontawesome.com/71ea2e3f82.js" crossorigin="anonymous"></script>
     </head>
-    <body class="vertical-flex">
+    <body class="vertical-flex" style="height: 100%; margin: 0;">
         <header class="text-center">
             <h1>Topaz <span id="version"></span></h1>
         </header>
-        <main class="vertical-flex">
+        <main class="vertical-flex" style="flex-grow: 1; overflow: hidden;">
             <section class="horizontal-flex" id="topbar">
                 <button class="no-button-style" onclick="newWorkspace()"><i class="fa-solid fa-plus"></i>New</button>
                 <button class="no-button-style" onclick="openWorkspace()"><i class="fa-solid fa-folder"></i>Open</button>
-                <button class="no-button-style" onclick="openCatalog()"><i class="fa-solid fa-shop"></i>Catalog</button>
+                <button class="no-button-style" onclick="openMarketplace()"><i class="fa-solid fa-shop"></i>Marketplace</button>
+                <button class="no-button-style" onclick="refreshWorkspaces()"><i class="fa-solid fa-arrows-rotate"></i>Refresh</button>
+                <button class="no-button-style" onclick="openSettings()"><i class="fa-solid fa-gear"></i>Settings</button>
             </section>
-            <section class="vertical-flex" id="workspaces"></section>
+            <section class="vertical-flex" id="workspaces" style="flex-grow: 1; overflow-y: auto;"></section>
         </main>
     </body>
 </html>

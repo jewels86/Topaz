@@ -11,7 +11,7 @@ header {
 }
 
 h1 {
-    font-size: 60px;
+    font-size: 40px;
     color: var(--heading);
 }
 
@@ -26,43 +26,40 @@ h1 {
     margin: 0 0.5vw;
 }
 
-.workspace {
-    margin: 1.5vh 1vw;
-    padding: 1vh 1vw;
-    background-color: var(--workspace-background);
-    width: 96vw;
+.marketplace {
+    margin: 2vh 1%;
+    padding: 1vh 1%;
+    background-color: var(--marketplace-background);
+    width: 96%;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    overflow: auto;
+}
 
-}
-.workspace > div, #workspaces > div > p {
-    width: 46%;
-    margin: 0 1%;
-}
-.workspace > div > h2 {
+.marketplace > h2 {
     font-size: 20px;
-    color: var(--workspace-name);
+    color: var(--marketplace-name);
     margin: 1vh;
     font-weight: bold;
 }
-.workspace > div > h3 {
+.marketplace > h3 {
     font-size: 16px;
-    color: var(--workspace-path);
+    color: var(--marketplace-url);
     margin: 1vh;
     font-weight: normal;
 }
-.workspace > p {
-    font-size: 16px;
-    color: var(--last-accessed);
-    align-self: center;
-    text-align: center;
-}
-.workspace:hover {
-    background-color: var(--workspace-hover);
+
+.marketplace:hover {
+    background-color: var(--marketplace-hover);
     cursor: pointer;
 }
 
-#workspaces {
+.marketplace::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+
+#marketplaces {
     flex-grow: 1;
     overflow-y: auto;
     overflow-x: hidden;

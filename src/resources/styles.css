@@ -60,3 +60,27 @@ body { min-height: 100vh; }
     display: flex;
     justify-content: space-between;
 }
+.overflow-auto {
+    overflow: auto;
+}
+.overflow-hidden {
+    overflow: hidden;
+}
+.overflow-scroll {
+    overflow: scroll;
+}
+.overflow-y-scroll {
+    overflow-y: scroll;
+}
+.overflow-y-auto {
+    overflow-y: auto;
+} 
+.overflow-x-auto {
+    overflow-x: auto;
+}
+.overflow-x-hidden {
+    overflow-x: hidden;
+}
+.flex {
+    flex: 1;
+}

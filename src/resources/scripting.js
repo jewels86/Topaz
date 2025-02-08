@@ -6,6 +6,10 @@ window.scripting = {
     getWorkspaceStatusBar: () => window.workspace.status_bar,
     getWorkspacePath: () => window.workspacePath,
     getProfilePath: () => window.workspace.profile,
+
+    openSelector: () => window._api.openSelector(),
+    openSettings: () => window._api.openSettings(),
+    openMarketplace: () => window._api.openMarketplace(),
 }
 
 function interpret(script) {

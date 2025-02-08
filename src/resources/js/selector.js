@@ -58,4 +58,30 @@ async function newWorkspace() {
     window.location.reload();
 }
 
+function openMarketplace() {
+    window._api.openMarketplace();
+}
+
+async function refreshWorkspaces() {
+    const uniqueWorkspaces = [];
+    const paths = new Set();
+
+    window._data.mainfile.known_workspaces = window._data.mainfile.known_workspaces.filter(workspace => {
+        if (paths.has(workspace.path)) {
+            return false;
+        }
+        paths.add(workspace.path);
+        const exists = _api.exists(workspace.path);
+        if (!exists) {
+            return false;
+        }
+        uniqueWorkspaces.push(workspace);
+        return true;
+    });
+
+    window._data.mainfile.known_workspaces = uniqueWorkspaces;
+    _api.write(await resolveFilePath("main.json"), JSON.stringify(window._data.mainfile, null, 4));
+    window.location.reload();
+}
+
 main();
