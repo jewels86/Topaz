@@ -1,16 +1,68 @@
 function loadTheme(theme) {
     const html = document.getElementsByTagName("html")[0];
     html.style.setProperty("--background", escapeCSS(theme.background));
-    html.style.setProperty("--title-buttons", escapeCSS(theme.title_buttons));
     html.style.setProperty("--heading", escapeCSS(theme.heading));
-    html.style.setProperty("--buttons", escapeCSS(theme.buttons));
-    html.style.setProperty("--buttons-hover", escapeCSS(theme.buttons_hover));
-    html.style.setProperty("--workspace-name", escapeCSS(theme.workspace_name));
-    html.style.setProperty("--workspace-path", escapeCSS(theme.workspace_path));
-    html.style.setProperty("--last-accessed", escapeCSS(theme.last_accessed));
-    html.style.setProperty("--workspace-background", escapeCSS(theme.workspace_background));
-    html.style.setProperty("--workspace-hover", escapeCSS(theme.workspace_hover));
+    html.style.setProperty("--questions", escapeCSS(theme.questions));
     html.style.setProperty("--text", escapeCSS(theme.text));
+    html.style.setProperty("--input-background", escapeCSS(theme.input_background));
+    html.style.setProperty("--input-border", escapeCSS(theme.input_border));
+    html.style.setProperty("--input-text", escapeCSS(theme.input_text));
+    html.style.setProperty("--submit-text", escapeCSS(theme.submit_text));
+    html.style.setProperty("--submit-background", escapeCSS(theme.submit_background));
+}
+
+function createQuestionElement(question) {
+    const container = document.createElement('div');
+    container.className = 'question';
+
+    const label = document.createElement('label');
+    label.innerText = question.name;
+    container.appendChild(label);
+
+    let input;
+    switch (question.type) {
+        case 'text':
+            input = document.createElement('input');
+            input.type = 'text';
+            input.classList.add('prompt-text', 'prompt')
+            break;
+        case 'selection':
+            input = document.createElement('input');
+            input.type = 'radio';
+            input.classList.add('prompt-selection', 'prompt')
+            break;
+        case 'dropdown':
+            input = document.createElement('select');
+            question.options.forEach(option => {
+                const opt = document.createElement('option');
+                opt.value = option;
+                opt.innerText = option;
+                input.appendChild(opt);
+            });
+            break;
+        case 'slider':
+            input = document.createElement('input');
+            input.type = 'range';
+            input.min = question.min;
+            input.max = question.max;
+            break;
+        default:
+            console.error('Unknown question type:', question.type);
+            return null;
+    }
+
+    container.appendChild(input);
+    return container;
+}
+
+function loadQuestions(questions) {
+    const container = document.getElementById('questions-container');
+    questions.forEach(question => {
+        const questionElement = createQuestionElement(question);
+        if (questionElement) {
+            container.appendChild(questionElement);
+        }
+    });
 }
 
 async function main() {
@@ -28,5 +80,14 @@ async function main() {
     const title = urlParams.get('title');
     const questions = JSON.parse(urlParams.get('questions'));
 
-    window.getElementsByTagName("title")[0].innerHTML = title;
+    document.getElementsByTagName("title")[0].innerHTML = title;
+
+    console.log("Parameters fetched: ", title, questions);
+    console.log("Loading prompt...");
+
+    loadQuestions(questions);
+
+    console.log("Prompt loaded.");
 }
+
+main();

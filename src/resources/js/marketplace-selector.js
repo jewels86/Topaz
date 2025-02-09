@@ -39,8 +39,18 @@ function openMarketplace(marketplace) {
 function openSelector() {
     window._api.openSelector();
 }
-function newMarketplace() {
-    window._api.newMarketplace();
+async function newMarketplace() {
+    const questions = [
+        {
+            name: "Name",
+            type: "text"
+        },
+        {
+            name: "URL",
+            type: "text"
+        }
+    ]
+    const answer = await window._api.openPrompt("New Marketplace", questions);
 }
 
 main();

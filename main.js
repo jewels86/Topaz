@@ -92,8 +92,8 @@ function createMarketplaceSelectorWindow() {
 function createPromptWindow(title, questions) {
     const queryParams = new URLSearchParams({ title, questions: JSON.stringify(questions) }).toString();
     const promptWin = new BrowserWindow({
-        width: 900,
-        height: 800,
+        width: 800,
+        height: 700,
         webPreferences: {
             preload: path.join(__dirname, 'src', 'preload.js'),
         },

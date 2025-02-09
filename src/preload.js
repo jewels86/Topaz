@@ -18,5 +18,7 @@ contextBridge.exposeInMainWorld('_api', {
     openMarketplace:    (marketplace) => ipcRenderer.invoke('openMarketplace', marketplace),
 
     // market-selector.js
-    openSelector:        () => ipcRenderer.invoke('openSelector')
+    openSelector:        () => ipcRenderer.invoke('openSelector'),
+
+    openPrompt:        (title, questions) => ipcRenderer.invoke('openPrompt', title, questions)
 })
