@@ -24,7 +24,7 @@ async function main() {
     window._data.mainfile.known_marketplaces.forEach(marketplace => {
         const element = document.createElement("div");
         element.classList.add("marketplace");
-        element.onclick = () => openMarketplace(marketplace.src);
+        element.onclick = () => openMarketplaceSite(marketplace.src);
         element.innerHTML = `
         <h2>${marketplace.name}</h2>
         <h3>${marketplace.src}</h3>
@@ -33,8 +33,8 @@ async function main() {
     });
 }
 
-function openMarketplace(marketplace) {
-    window._api.openMarketplace(marketplace);
+function openMarketplaceSite(marketplace) {
+    window._api.openMarketplaceSite(marketplace);
 }
 function openSelector() {
     window._api.openSelector();
